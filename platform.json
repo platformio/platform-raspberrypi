@@ -1,0 +1,53 @@
+{
+  "name": "raspberrypi",
+  "title": "Raspberry Pi RP2040",
+  "description": "RP2040 is a low-cost, high-performance microcontroller device with with a large on-chip memory, symmetric dual-core processor complex, and rich peripheral.",
+  "homepage": "https://www.raspberrypi.org/documentation/rp2040/getting-started/",
+  "license": "Apache-2.0",
+  "keywords": [
+    "dev-platform",
+    "ARM",
+    "Cortex-M",
+    "Raspberry Pi",
+    "RP2040"
+  ],
+  "engines": {
+    "platformio": "^5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/platformio/platform-raspberrypi.git"
+  },
+  "version": "0.0.0",
+  "frameworks": {
+    "arduino": {
+      "package": "framework-arduino-mbed",
+      "script": "builder/frameworks/arduino/mbed-core/arduino-core-mbed.py"
+    }
+  },
+  "packages": {
+    "toolchain-gccarmnoneeabi": {
+      "type": "toolchain",
+      "owner": "platformio",
+      "version": "~1.90201.0"
+    },
+    "framework-arduino-mbed": {
+      "type": "framework",
+      "optional": true,
+      "owner": "platformio",
+      "version": "~2.0.0"
+    },
+    "tool-rp2040tools": {
+      "type": "uploader",
+      "optional": true,
+      "owner": "platformio",
+      "version": "~1.0.2"
+    },
+    "tool-openocd-raspberrypi": {
+      "type": "uploader",
+      "optional": true,
+      "owner": "platformio",
+      "version": "~2.1100.0"
+    }
+  }
+}
