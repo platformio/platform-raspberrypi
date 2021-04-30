@@ -48,6 +48,12 @@
       "optional": true,
       "owner": "platformio",
       "version": "~2.1100.0"
+    },
+    "tool-jlink": {
+      "type": "uploader",
+      "optional": true,
+      "owner": "platformio",
+      "version": "~1.72000.0"
     }
   }
 }
