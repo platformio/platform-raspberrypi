@@ -38,6 +38,19 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
         env.Replace(UPLOAD_PORT=env.WaitForNewSerialPort(before_ports))
 
 
+def generate_uf2(target, source, env):
+    elf_file = target[0].get_path()
+    env.Execute(
+        " ".join(
+            [
+                join(platform.get_package_dir("tool-rp2040tools") or "", "elf2uf2"),
+                '"%s"' % elf_file,
+                '"%s"' % elf_file.replace(".elf", ".uf2"),
+            ]
+        )
+    )
+
+
 env = DefaultEnvironment()
 platform = env.PioPlatform()
 board = env.BoardConfig()
@@ -111,6 +124,10 @@ else:
 
 AlwaysBuild(env.Alias("nobuild", target_firm))
 target_buildprog = env.Alias("buildprog", target_firm, target_firm)
+
+env.AddPostAction(
+    target_elf, env.VerboseAction(generate_uf2, "Generating UF2 image")
+)
 
 #
 # Target: Print binary size
