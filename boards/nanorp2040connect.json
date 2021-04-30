@@ -35,8 +35,7 @@
     "wait_for_upload_port": false,
     "protocols": [
       "cmsis-dap",
-      "raspberrypi-swd",
-      "stlink"
+      "raspberrypi-swd"
     ]
   },
   "url": "https://blog.arduino.cc/2021/01/20/welcome-raspberry-pi-to-the-world-of-microcontrollers/",

@@ -31,8 +31,7 @@
     "wait_for_upload_port": false,
     "protocols": [
       "cmsis-dap",
-      "raspberrypi-swd",
-      "stlink"
+      "raspberrypi-swd"
     ]
   },
   "url": "https://www.raspberrypi.org/products/raspberry-pi-pico/",
