@@ -33,9 +33,11 @@
     "native_usb": true,
     "use_1200bps_touch": true,
     "wait_for_upload_port": false,
+    "protocol": "picotool",
     "protocols": [
       "cmsis-dap",
-      "raspberrypi-swd"
+      "raspberrypi-swd",
+      "picotool"
     ]
   },
   "url": "https://blog.arduino.cc/2021/01/20/welcome-raspberry-pi-to-the-world-of-microcontrollers/",
