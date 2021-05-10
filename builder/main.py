@@ -197,6 +197,7 @@ elif upload_protocol.startswith("jlink"):
         UPLOADCMD='$UPLOADER $UPLOADERFLAGS -CommanderScript "${__jlink_cmd_script(__env__, SOURCE)}"'
     )
     upload_actions = [env.VerboseAction("$UPLOADCMD", "Uploading $SOURCE")]
+    upload_source = env.ElfToHex(join("$BUILD_DIR", "${PROGNAME}"), target_elf)
 
 elif upload_protocol in debug_tools:
     openocd_args = [
