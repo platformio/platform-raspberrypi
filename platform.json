@@ -39,7 +39,6 @@
     },
     "tool-rp2040tools": {
       "type": "uploader",
-      "optional": true,
       "owner": "platformio",
       "version": "~1.0.2"
     },
