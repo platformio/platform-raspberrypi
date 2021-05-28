@@ -36,6 +36,7 @@
     "protocol": "picotool",
     "protocols": [
       "cmsis-dap",
+      "jlink",
       "raspberrypi-swd",
       "picotool"
     ]
