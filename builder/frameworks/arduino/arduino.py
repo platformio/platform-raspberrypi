@@ -28,7 +28,8 @@ if core == "earlephilhower":
     build_script = join(
         env.PioPlatform().get_package_dir("framework-arduinopico"), "tools", "platformio-build.py")
 else:
-    build_script = join(env.PioPlatform().get_dir(), "builder", "frameworks", "arduino", "mbed-core", "arduino-core-mbed.py")
+    build_script = join(env.PioPlatform().get_dir(), "builder",
+                        "frameworks", "arduino", "mbed-core", "arduino-core-mbed.py")
 
 if not isfile(build_script):
     sys.stderr.write(

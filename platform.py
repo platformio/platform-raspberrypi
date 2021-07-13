@@ -25,7 +25,7 @@ class RaspberrypiPlatform(PlatformBase):
         return True
 
     def configure_default_packages(self, variables, targets):
-        # configure arduino core package. 
+        # configure arduino core package.
         # select the right one based on the build.core, disable other one.
         board = variables.get("board")
         board_config = self.board_config(board)
@@ -40,8 +40,9 @@ class RaspberrypiPlatform(PlatformBase):
             elif build_core == "earlephilhower":
                 self.frameworks["arduino"]["package"] = "framework-arduinopico"
                 self.packages["framework-arduino-mbed"]["optional"] = True
-            else: 
-                sys.stderr.write("Error! Unknown build.core value '%s'. Don't know which Arduino core package to use." % build_core)
+            else:
+                sys.stderr.write(
+                    "Error! Unknown build.core value '%s'. Don't know which Arduino core package to use." % build_core)
 
         # configure J-LINK tool
         jlink_conds = [
@@ -103,7 +104,8 @@ class RaspberrypiPlatform(PlatformBase):
                 }
             else:
                 openocd_target = debug.get("openocd_target")
-                assert openocd_target, ("Missing target configuration for %s" % board.id)
+                assert openocd_target, ("Missing target configuration for %s" %
+                                        board.id)
                 debug["tools"][link] = {
                     "server": {
                         "executable": "bin/openocd",
