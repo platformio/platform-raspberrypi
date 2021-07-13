@@ -36,9 +36,9 @@ class RaspberrypiPlatform(PlatformBase):
         if "arduino" in frameworks:
             if build_core == "arduino":
                 self.frameworks["arduino"]["package"] = "framework-arduino-mbed"
-                self.packages["framework-arduino-pico-earlephilhower"]["optional"] = True
+                self.packages["framework-arduinopico"]["optional"] = True
             elif build_core == "earlephilhower":
-                self.frameworks["arduino"]["package"] = "framework-arduino-pico-earlephilhower"
+                self.frameworks["arduino"]["package"] = "framework-arduinopico"
                 self.packages["framework-arduino-mbed"]["optional"] = True
             else: 
                 sys.stderr.write("Error! Unknown build.core value '%s'. Don't know which Arduino core package to use." % build_core)

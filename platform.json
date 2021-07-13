@@ -37,7 +37,7 @@
       "owner": "platformio",
       "version": "~2.1.0"
     },
-    "framework-arduino-pico-earlephilhower": {
+    "framework-arduinopico": {
       "type": "framework",
       "optional": true,
       "owner": "maxgerhardt",
