@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
 import copy
 import platform
 
@@ -24,6 +25,24 @@ class RaspberrypiPlatform(PlatformBase):
         return True
 
     def configure_default_packages(self, variables, targets):
+        # configure arduino core package. 
+        # select the right one based on the build.core, disable other one.
+        board = variables.get("board")
+        board_config = self.board_config(board)
+        build_core = variables.get(
+            "board_build.core", board_config.get("build.core", "arduino"))
+
+        frameworks = variables.get("pioframework", [])
+        if "arduino" in frameworks:
+            if build_core == "arduino":
+                self.frameworks["arduino"]["package"] = "framework-arduino-mbed"
+                self.packages["framework-arduino-pico-earlephilhower"]["optional"] = True
+            elif build_core == "earlephilhower":
+                self.frameworks["arduino"]["package"] = "framework-arduino-pico-earlephilhower"
+                self.packages["framework-arduino-mbed"]["optional"] = True
+            else: 
+                sys.stderr.write("Error! Unknown build.core value '%s'. Don't know which Arduino core package to use." % build_core)
+
         # configure J-LINK tool
         jlink_conds = [
             "jlink" in variables.get(option, "")

@@ -22,7 +22,7 @@
   "frameworks": {
     "arduino": {
       "package": "framework-arduino-mbed",
-      "script": "builder/frameworks/arduino/mbed-core/arduino-core-mbed.py"
+      "script": "builder/frameworks/arduino/arduino.py"
     }
   },
   "packages": {
@@ -36,6 +36,12 @@
       "optional": true,
       "owner": "platformio",
       "version": "~2.1.0"
+    },
+    "framework-arduino-pico-earlephilhower": {
+      "type": "framework",
+      "optional": true,
+      "owner": "maxgerhardt",
+      "version": "~1.10902.0"
     },
     "tool-rp2040tools": {
       "type": "uploader",
