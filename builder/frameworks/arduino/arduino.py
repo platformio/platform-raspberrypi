@@ -18,7 +18,6 @@ from os.path import join, isfile
 from SCons.Script import DefaultEnvironment, SConscript
 
 env = DefaultEnvironment()
-mcu = env.BoardConfig().get("build.mcu")
 core = env.BoardConfig().get("build.core", "arduino")
 build_script = ""
 
