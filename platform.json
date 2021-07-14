@@ -65,6 +65,12 @@
       "optional": true,
       "owner": "platformio",
       "version": "~1.72000.0"
+    },
+    "tool-mklittlefs": {
+      "type": "uploader",
+      "optional": true,
+      "owner": "platformio",
+      "version": "~1.203.0"
     }
   }
 }

@@ -46,6 +46,10 @@ class RaspberrypiPlatform(PlatformBase):
                 sys.stderr.write(
                     "Error! Unknown build.core value '%s'. Don't know which Arduino core package to use." % build_core)
 
+        # if we want to build a filesystem, we need the tools.
+        if "buildfs" in targets:
+            self.packages['tool-mklittlefs']['optional'] = False
+
         # configure J-LINK tool
         jlink_conds = [
             "jlink" in variables.get(option, "")

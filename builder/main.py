@@ -16,6 +16,7 @@ import sys
 from platform import system
 from os import makedirs
 from os.path import isdir, join
+import re
 
 from platformio.util import get_serial_ports
 
@@ -67,6 +68,9 @@ env.Replace(
 
     ARFLAGS=["rc"],
 
+    MKFSTOOL="mklittlefs",
+    PICO_FS_IMAGE_NAME=env.get("PICO_FS_IMAGE_NAME", "littlefs"),
+
     SIZEPROGREGEXP=r"^(?:\.text|\.data|\.rodata|\.text.align|\.ARM.exidx)\s+(\d+).*",
     SIZEDATAREGEXP=r"^(?:\.data|\.bss|\.noinit)\s+(\d+).*",
     SIZECHECKCMD="$SIZETOOL -A -d $SOURCES",
@@ -109,6 +113,100 @@ env.Append(
 if not env.get("PIOFRAMEWORK"):
     env.SConscript("frameworks/_bare.py")
 
+
+def convert_size_expression_to_int(expression):
+    conversion_factors = {
+        "M": 1024*1024,
+        "MB": 1024*1024,
+        "K": 1024,
+        "KB": 1024,
+        "B": 1,
+        "": 1 # giving no conversion factor is factor 1.
+    }
+    # match <floating pointer number><conversion factor>.
+    extract_regex = r'^((?:[0-9]*[.])?[0-9]+)([mkbMKB]*)$'
+    res = re.findall(extract_regex, expression)
+    # unparsable expression? Warning.
+    if len(res) == 0:
+        sys.stderr.write(
+            "Error: Could not parse filesystem size expression '%s'."
+            " Will treat as size = 0.\n" % str(expression))
+        return 0
+    # access first result
+    number, factor = res[0]
+    number = float(number)
+    number *= conversion_factors[factor.upper()]
+    return int(number)
+
+def fetch_fs_size(env):
+    # follow generation formulas from makeboards.py for Earle Philhower core
+    # given the total flash size, a user can specify
+    # the amount for the filesystem (0MB, 2MB, 4MB, 8MB, 16MB)
+    # via board_build.filesystem_size,
+    # and we will calculate the flash size and eeprom size from that.
+    flash_size = board.get("upload.maximum_size")
+    filesystem_size = board.get("build.filesystem_size", "0MB")
+    filesystem_size_int = convert_size_expression_to_int(filesystem_size)
+
+    maximum_size = flash_size - 4096 - filesystem_size_int
+
+    print("Flash size: %.2fMB" % (flash_size / 1024.0 / 1024.0))
+    print("Sketch size: %.2fMB" % (maximum_size / 1024.0 / 1024.0))
+    print("Filesystem size: %.2fMB" % (filesystem_size_int / 1024.0 / 1024.0))
+
+    flash_length = maximum_size
+    eeprom_start = 0x10000000 + flash_size - 4096
+    fs_start = 0x10000000 + flash_size - 4096 - filesystem_size_int
+    fs_end = 0x10000000 + flash_size - 4096
+
+    if maximum_size <= 0:
+        sys.stderr.write(
+            "Error: Filesystem too large for given flash. "
+            "Can at max be flash size - 4096 bytes. "
+            "Available sketch size with current "
+            "config would be %d bytes.\n" % maximum_size)
+        sys.stderr.flush()
+        env.Exit(-1)
+
+    env["PICO_FLASH_LENGTH"] = flash_length
+    env["PICO_EEPROM_START"] = eeprom_start
+    env["FS_START"] = fs_start
+    env["FS_END"] = fs_end
+    # LittleFS configuration paramters taken from
+    # https://github.com/earlephilhower/arduino-pico-littlefs-plugin/blob/master/src/PicoLittleFS.java
+    env["FS_PAGE"] = 256
+    env["FS_BLOCK"] = 4096
+
+    print("Maximium size: %d Flash Length: %d "
+        "EEPROM Start: %d Filesystem start %d "
+        "Filesystem end %s" % 
+        (maximum_size,flash_length, eeprom_start, fs_start, fs_end))
+
+
+def __fetch_fs_size(target, source, env):
+    fetch_fs_size(env)
+    return (target, source)
+
+env.Append(
+    BUILDERS=dict(
+        DataToBin=Builder(
+            action=env.VerboseAction(" ".join([
+                '"$MKFSTOOL"',
+                "-c", "$SOURCES",
+                "-p", "$FS_PAGE",
+                "-b", "$FS_BLOCK",
+                "-s", "${FS_END - FS_START}",
+                "$TARGET"
+            ]), "Building file system image from '$SOURCES' directory to $TARGET"),
+            emitter=__fetch_fs_size,
+            source_factory=env.Dir,
+            suffix=".bin"
+        )
+    )
+)
+
+env["fetch_fs_size"] = fetch_fs_size
+
 #
 # Target: Build executable and linkable firmware
 #
@@ -119,15 +217,36 @@ if "nobuild" in COMMAND_LINE_TARGETS:
     target_firm = join("$BUILD_DIR", "${PROGNAME}.bin")
 else:
     target_elf = env.BuildProgram()
-    target_firm = env.ElfToBin(join("$BUILD_DIR", "${PROGNAME}"), target_elf)
-    env.Depends(target_firm, "checkprogsize")
+    if set(["buildfs", "uploadfs"]) & set(COMMAND_LINE_TARGETS):
+        target_firm = env.DataToBin(
+            join("$BUILD_DIR", "${PICO_FS_IMAGE_NAME}"), "$PROJECTDATA_DIR")
+        AlwaysBuild(target_firm)
+    else:
+        target_firm = env.ElfToBin(join("$BUILD_DIR", "${PROGNAME}"), target_elf)
+        env.Depends(target_firm, "checkprogsize")
 
+env.AddPlatformTarget("buildfs", target_firm, target_firm, "Build Filesystem Image")
 AlwaysBuild(env.Alias("nobuild", target_firm))
 target_buildprog = env.Alias("buildprog", target_firm, target_firm)
 
 env.AddPostAction(
     target_elf, env.VerboseAction(generate_uf2, "Generating UF2 image")
 )
+
+def _update_max_upload_size(env):
+    fetch_fs_size(env)
+    env.BoardConfig().update("upload.maximum_size", env["PICO_FLASH_LENGTH"])
+
+# update max upload size based on CSV file
+if env.get("PIOMAINPROG"):
+    env.AddPreAction(
+        "checkprogsize",
+        env.VerboseAction(
+            lambda source, target, env: _update_max_upload_size(env),
+            "Retrieving maximum program size $SOURCE"))
+# remove after PIO Core 3.6 release
+elif set(["checkprogsize", "upload"]) & set(COMMAND_LINE_TARGETS):
+    _update_max_upload_size(env)
 
 #
 # Target: Print binary size
@@ -232,7 +351,7 @@ if not upload_actions:
     sys.stderr.write("Warning! Unknown upload protocol %s\n" % upload_protocol)
 
 AlwaysBuild(env.Alias("upload", upload_source, upload_actions))
-
+env.AddPlatformTarget("uploadfs", target_firm, upload_actions, "Upload Filesystem Image")
 #
 # Default targets
 #
