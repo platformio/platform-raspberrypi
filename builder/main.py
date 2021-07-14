@@ -17,6 +17,7 @@ from platform import system
 from os import makedirs
 from os.path import isdir, join
 import re
+import time
 
 from platformio.util import get_serial_ports
 
@@ -258,6 +259,15 @@ target_size = env.Alias(
     env.VerboseAction("$SIZEPRINTCMD", "Calculating size $SOURCE"))
 AlwaysBuild(target_size)
 
+def DelayBeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
+    time.sleep(0.5)
+
+def RebootPico(target, source, env): 
+    time.sleep(0.5)
+    env.Execute(
+        '"%s" reboot' %
+            join(platform.get_package_dir("tool-rp2040tools") or "", "picotool")
+    )
 #
 # Target: Upload by default .bin file
 #
@@ -279,10 +289,27 @@ elif upload_protocol == "picotool":
         UPLOADCMD="$UPLOADER $UPLOADERFLAGS $SOURCES"
     )
 
+    if "uploadfs" in COMMAND_LINE_TARGETS:
+        env.Replace(
+            UPLOADER=join(platform.get_package_dir("tool-rp2040tools") or "", "picotool"),
+            UPLOADERFLAGS=[
+                "load",
+                "--verify"
+            ],
+            UPLOADCMD="$UPLOADER $UPLOADERFLAGS $SOURCES --offset ${hex(FS_START)}",
+        )
+
     upload_actions = [
         env.VerboseAction(BeforeUpload, "Looking for upload port..."),
         env.VerboseAction("$UPLOADCMD", "Uploading $SOURCE"),
     ]
+
+    # picotool seems to need just a tiny bit of delay, but rp2040 load not..
+    if "uploadfs" in COMMAND_LINE_TARGETS:
+        upload_actions.insert(1, env.VerboseAction(DelayBeforeUpload, "Delaying a tiny bit..."))
+        # reboot after filesystem upload
+        upload_actions.append(env.VerboseAction(RebootPico, "Rebooting device..."))
+
 
     upload_source = target_elf
 
