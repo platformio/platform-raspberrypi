@@ -11,7 +11,17 @@
       ]
     ],
     "mcu": "rp2040",
-    "variant": "RASPBERRY_PI_PICO"
+    "variant": "RASPBERRY_PI_PICO",
+    "arduino": {
+      "earlephilhower": {
+        "variant": "rpipico",
+        "boot2_source": "boot2_w25q080_2_padded_checksum.S",
+        "usb_vid": "0x2e8a",
+        "usb_pid": "0x000a",
+        "usb_manufacturer": "Raspberry Pi",
+        "usb_product": "Pico"        
+      }
+    }
   },
   "debug": {
     "jlink_device": "RP2040_M0_0",
