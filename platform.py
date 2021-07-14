@@ -40,6 +40,8 @@ class RaspberrypiPlatform(PlatformBase):
             elif build_core == "earlephilhower":
                 self.frameworks["arduino"]["package"] = "framework-arduinopico"
                 self.packages["framework-arduino-mbed"]["optional"] = True
+                self.packages.pop("toolchain-gccarmnoneeabi", None)
+                self.packages["toolchain-pico"]["optional"] = False                
             else:
                 sys.stderr.write(
                     "Error! Unknown build.core value '%s'. Don't know which Arduino core package to use." % build_core)

@@ -31,6 +31,12 @@
       "owner": "platformio",
       "version": "~1.90201.0"
     },
+    "toolchain-pico": {
+      "type": "toolchain", 
+      "optional": true,
+      "owner": "maxgerhardt",
+      "version": "~5.100300.0"
+    },
     "framework-arduino-mbed": {
       "type": "framework",
       "optional": true,
