@@ -205,6 +205,7 @@ env.Append(
     )
 )
 
+# store function to get infno about filesystems for builder scripts.
 env["fetch_fs_size"] = fetch_fs_size
 
 #
