@@ -2,7 +2,7 @@
   "build": {
     "core": "arduino",
     "cpu": "cortex-m0plus",
-    "extra_flags": "-D NANO_RP2040_CONNECT -DARDUINO_ARCH_RP2040",
+    "extra_flags": "-D ARDUINO_NANO_RP2040_CONNECT -DARDUINO_ARCH_RP2040",
     "f_cpu": "133000000L",
     "hwids": [
       [
