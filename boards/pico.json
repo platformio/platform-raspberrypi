@@ -44,7 +44,8 @@
       "cmsis-dap",
       "jlink",
       "raspberrypi-swd",
-      "picotool"
+      "picotool",
+      "picoprobe"
     ]
   },
   "url": "https://www.raspberrypi.org/products/raspberry-pi-pico/",

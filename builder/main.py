@@ -356,15 +356,25 @@ elif upload_protocol in debug_tools:
         openocd_args.extend(
             ["-c", "adapter speed %s" % env.GetProjectOption("debug_speed")]
         )
-    openocd_args.extend([
-        "-c", "program {$SOURCE} %s verify reset; shutdown;" %
-        board.get("upload.offset_address", "")
-    ])
+    if "uploadfs" in COMMAND_LINE_TARGETS:
+        # filesystem upload. use FS_START.
+        openocd_args.extend([
+            "-c", "program {$SOURCE} ${hex(FS_START)} verify reset; shutdown;"
+        ])
+    else:
+        # normal firmware upload. flash starts at 0x10000000
+        openocd_args.extend([
+            "-c", "program {$SOURCE} %s verify reset; shutdown;" %
+            board.get("upload.offset_address", "0x10000000")
+        ])
     openocd_args = [
         f.replace("$PACKAGE_DIR", platform.get_package_dir(
             "tool-openocd-raspberrypi") or "")
         for f in openocd_args
     ]
+    # use ELF file for upload, not bin (target_firm). otherwise needs
+    # offset 0x10000000
+    #upload_source = target_elf
     env.Replace(
         UPLOADER="openocd",
         UPLOADERFLAGS=openocd_args,

@@ -48,7 +48,8 @@
       "cmsis-dap",
       "jlink",
       "raspberrypi-swd",
-      "picotool"
+      "picotool",
+      "picoprobe"
     ]
   },
   "url": "https://blog.arduino.cc/2021/01/20/welcome-raspberry-pi-to-the-world-of-microcontrollers/",
