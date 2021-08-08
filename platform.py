@@ -37,6 +37,8 @@ class RaspberrypiPlatform(PlatformBase):
             if build_core == "arduino":
                 self.frameworks["arduino"]["package"] = "framework-arduino-mbed"
                 self.packages["framework-arduinopico"]["optional"] = True
+                self.packages["toolchain-pico"]["optional"] = True 
+                self.packages.pop("toolchain-pico", None)
             elif build_core == "earlephilhower":
                 self.frameworks["arduino"]["package"] = "framework-arduinopico"
                 self.packages["framework-arduino-mbed"]["optional"] = True
