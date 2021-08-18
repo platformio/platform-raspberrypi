@@ -284,7 +284,7 @@ if upload_protocol == "mbed":
     ]
 elif upload_protocol == "picotool":
     env.Replace(
-        UPLOADER="rp2040load",
+        UPLOADER='"%s"' % join(platform.get_package_dir("tool-rp2040tools") or "", "rp2040load"),
         UPLOADERFLAGS=["-v", "-D"],
         UPLOADCMD="$UPLOADER $UPLOADERFLAGS $SOURCES"
     )
@@ -309,7 +309,6 @@ elif upload_protocol == "picotool":
         upload_actions.insert(1, env.VerboseAction(DelayBeforeUpload, "Delaying a tiny bit..."))
         # reboot after filesystem upload
         upload_actions.append(env.VerboseAction(RebootPico, "Rebooting device..."))
-
 
     upload_source = target_elf
 
