@@ -18,7 +18,7 @@
     "type": "git",
     "url": "https://github.com/platformio/platform-raspberrypi.git"
   },
-  "version": "1.1.0",
+  "version": "1.2.0",
   "frameworks": {
     "arduino": {
       "package": "framework-arduino-mbed",
@@ -41,7 +41,7 @@
       "type": "framework",
       "optional": true,
       "owner": "platformio",
-      "version": "~2.1.0"
+      "version": "~2.4.0"
     },
     "framework-arduinopico": {
       "type": "framework",
