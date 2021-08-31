@@ -43,7 +43,7 @@ def generate_uf2(target, source, env):
     env.Execute(
         " ".join(
             [
-                join(platform.get_package_dir("tool-rp2040tools") or "", "elf2uf2"),
+                "elf2uf2",
                 '"%s"' % elf_file,
                 '"%s"' % elf_file.replace(".elf", ".uf2"),
             ]
@@ -156,7 +156,7 @@ elif upload_protocol == "picotool":
     env.Replace(
         UPLOADER=join(platform.get_package_dir("tool-rp2040tools") or "", "rp2040load"),
         UPLOADERFLAGS=["-v", "-D"],
-        UPLOADCMD="$UPLOADER $UPLOADERFLAGS $SOURCES"
+        UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES'
     )
 
     upload_actions = [
