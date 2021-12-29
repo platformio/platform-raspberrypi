@@ -284,9 +284,9 @@ if upload_protocol == "mbed":
     ]
 elif upload_protocol == "picotool":
     env.Replace(
-        UPLOADER='"%s"' % join(platform.get_package_dir("tool-rp2040tools") or "", "rp2040load"),
+        UPLOADER=join(platform.get_package_dir("tool-rp2040tools") or "", "rp2040load"),
         UPLOADERFLAGS=["-v", "-D"],
-        UPLOADCMD="$UPLOADER $UPLOADERFLAGS $SOURCES"
+        UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES'
     )
 
     if "uploadfs" in COMMAND_LINE_TARGETS:
