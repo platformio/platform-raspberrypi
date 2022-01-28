@@ -1,8 +1,8 @@
 {
   "build": {
-    "core": "arduino",
+    "core": "earlephilhower",
     "cpu": "cortex-m0plus",
-    "extra_flags": "-D ARDUINO_RASPBERRY_PI_PICO -DARDUINO_ARCH_RP2040 -DUSBD_MAX_POWER_MA=500",
+    "extra_flags": "-D ARDUINO_RASPBERRY_PI_PICO -DARDUINO_ARCH_RP2040 -DUSBD_MAX_POWER_MA=250",
     "f_cpu": "133000000L",
     "hwids": [
       [
@@ -11,7 +11,6 @@
       ]
     ],
     "mcu": "rp2040",
-    "variant": "RASPBERRY_PI_PICO",
     "arduino": {
       "earlephilhower": {
         "variant": "rpipico",
@@ -19,7 +18,7 @@
         "usb_vid": "0x2e8a",
         "usb_pid": "0x000a",
         "usb_manufacturer": "Raspberry Pi",
-        "usb_product": "Pico"        
+        "usb_product": "Pico"
       }
     }
   },
@@ -31,7 +30,7 @@
   "frameworks": [
     "arduino"
   ],
-  "name": "Raspberry Pi Pico",
+  "name": "Pico",
   "upload": {
     "maximum_ram_size": 270336,
     "maximum_size": 2097152,
