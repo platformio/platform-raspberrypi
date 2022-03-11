@@ -100,19 +100,16 @@ class RaspberrypiPlatform(PlatformBase):
         board.manifest["debug"] = debug
         return board
 
-    def configure_debug_options(self, initial_debug_options, ide_data):
-        debug_options = copy.deepcopy(initial_debug_options)
-        adapter_speed = initial_debug_options.get("speed", "5000")
-        if adapter_speed:
-            server_options = debug_options.get("server") or {}
-            server_executable = server_options.get("executable", "").lower()
-            if "target/cmsis-dap.cfg" in server_options.get("arguments", []):
-                debug_options["server"]["arguments"].extend(
-                    ["-c", "adapter_khz %s" % adapter_speed]
-                )
-            elif "jlink" in server_executable:
-                debug_options["server"]["arguments"].extend(
-                    ["-speed", adapter_speed]
-                )
-
-        return debug_options
+    def configure_debug_session(self, debug_config):
+        adapter_speed = debug_config.speed or "5000"
+        
+        server_options = debug_config.server or {}
+        server_arguments = server_options.get("arguments", [])
+        if "interface/cmsis-dap.cfg" in server_arguments:
+            server_arguments.extend(
+                ["-c", "adapter speed %s" % adapter_speed]
+            )
+        elif "jlink" in server_options.get("executable", "").lower():
+            server_arguments.extend(
+                ["-speed", adapter_speed]
+            )
