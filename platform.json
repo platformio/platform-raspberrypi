@@ -35,7 +35,7 @@
       "type": "framework",
       "optional": true,
       "owner": "platformio",
-      "version": "~2.7.0"
+      "version": "~3.0.1"
     },
     "tool-rp2040tools": {
       "type": "uploader",
