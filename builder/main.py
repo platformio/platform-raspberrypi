@@ -222,6 +222,8 @@ elif upload_protocol in debug_tools:
         UPLOADER="openocd",
         UPLOADERFLAGS=openocd_args,
         UPLOADCMD="$UPLOADER $UPLOADERFLAGS")
+    if not board.get("upload").get("offset_address"):
+        upload_source = target_elf
     upload_actions = [env.VerboseAction("$UPLOADCMD", "Uploading $SOURCE")]
 
 # custom upload tool
