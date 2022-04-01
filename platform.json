@@ -1,7 +1,7 @@
 {
   "name": "raspberrypi",
   "title": "Raspberry Pi RP2040",
-  "description": "RP2040 is a low-cost, high-performance microcontroller device with with a large on-chip memory, symmetric dual-core processor complex, and rich peripheral.",
+  "description": "RP2040 is a low-cost, high-performance microcontroller device with a large on-chip memory, symmetric dual-core processor complex, and rich peripheral.",
   "homepage": "https://www.raspberrypi.org/documentation/rp2040/getting-started/",
   "license": "Apache-2.0",
   "keywords": [
@@ -18,7 +18,7 @@
     "type": "git",
     "url": "https://github.com/platformio/platform-raspberrypi.git"
   },
-  "version": "1.5.0",
+  "version": "1.6.0",
   "frameworks": {
     "arduino": {
       "package": "framework-arduino-mbed",
@@ -35,7 +35,7 @@
       "type": "framework",
       "optional": true,
       "owner": "platformio",
-      "version": "~2.6.0"
+      "version": "~3.0.1"
     },
     "tool-rp2040tools": {
       "type": "uploader",
