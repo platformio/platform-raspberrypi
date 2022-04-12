@@ -15,7 +15,8 @@
 import sys
 from platform import system
 from os import makedirs
-from os.path import isdir, join
+from os.path import isdir, join, isfile
+from shutil import copyfile
 import re
 import time
 
@@ -277,10 +278,26 @@ upload_protocol = env.subst("$UPLOAD_PROTOCOL") or "picotool"
 upload_actions = []
 upload_source = target_firm
 
+def UploadUF2ToDisk(_, target, source, env):
+    assert "UPLOAD_PORT" in env
+    progname = env.subst("$PROGNAME")
+    ext = ".uf2"
+    fpath = join(env.subst("$BUILD_DIR"), "%s.%s" % (progname, ext))
+    if not isfile(fpath):
+        print(
+            "Firmware file %s not found.\n" % fpath
+        )
+        return
+    copyfile(fpath, join(env.subst("$UPLOAD_PORT"), "%s.%s" % (progname, ext)))
+    print(
+        "Firmware has been successfully uploaded.\n"
+        "(Some boards may require manual hard reset)"
+    )
+
 if upload_protocol == "mbed":
     upload_actions = [
         env.VerboseAction(env.AutodetectUploadPort, "Looking for upload disk..."),
-        env.VerboseAction(env.UploadToDisk, "Uploading $SOURCE")
+        env.VerboseAction(env.UploadUF2ToDisk, "Uploading $SOURCE")
     ]
 elif upload_protocol == "picotool":
     env.Replace(
