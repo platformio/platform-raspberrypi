@@ -293,6 +293,7 @@ def UploadUF2ToDisk(_, target, source, env):
         "Firmware has been successfully uploaded.\n"
         "(Some boards may require manual hard reset)"
     )
+env.UploadUF2ToDisk = UploadUF2ToDisk
 
 if upload_protocol == "mbed":
     upload_actions = [
