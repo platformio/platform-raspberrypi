@@ -278,7 +278,7 @@ upload_protocol = env.subst("$UPLOAD_PROTOCOL") or "picotool"
 upload_actions = []
 upload_source = target_firm
 
-def UploadUF2ToDisk(_, target, source, env):
+def UploadUF2ToDisk(target, source, env):
     assert "UPLOAD_PORT" in env
     progname = env.subst("$PROGNAME")
     ext = ".uf2"
