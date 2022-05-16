@@ -281,7 +281,7 @@ upload_source = target_firm
 def UploadUF2ToDisk(target, source, env):
     assert "UPLOAD_PORT" in env
     progname = env.subst("$PROGNAME")
-    ext = ".uf2"
+    ext = "uf2"
     fpath = join(env.subst("$BUILD_DIR"), "%s.%s" % (progname, ext))
     if not isfile(fpath):
         print(
