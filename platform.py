@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import copy
 import platform
 
 from platformio.managers.platform import PlatformBase
@@ -102,7 +101,7 @@ class RaspberrypiPlatform(PlatformBase):
 
     def configure_debug_session(self, debug_config):
         adapter_speed = debug_config.speed or "5000"
-        
+
         server_options = debug_config.server or {}
         server_arguments = server_options.get("arguments", [])
         if "interface/cmsis-dap.cfg" in server_arguments:
