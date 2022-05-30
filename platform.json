@@ -12,13 +12,13 @@
     "RP2040"
   ],
   "engines": {
-    "platformio": "^5"
+    "platformio": "^6"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/platformio/platform-raspberrypi.git"
   },
-  "version": "1.6.0",
+  "version": "1.7.0",
   "frameworks": {
     "arduino": {
       "package": "framework-arduino-mbed",
@@ -35,7 +35,7 @@
       "type": "framework",
       "optional": true,
       "owner": "platformio",
-      "version": "~3.0.1"
+      "version": "~3.1.1"
     },
     "tool-rp2040tools": {
       "type": "uploader",
