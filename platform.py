@@ -128,10 +128,10 @@ class RaspberrypiPlatform(PlatformBase):
         return board
 
     def configure_debug_session(self, debug_config):
-        adapter_speed = debug_config.speed or "5000"
+        adapter_speed = debug_config.speed or "1000"
         server_options = debug_config.server or {}
         server_arguments = server_options.get("arguments", [])
-        if "interface/cmsis-dap.cfg" in server_arguments:
+        if "interface/cmsis-dap.cfg" in server_arguments or "interface/picoprobe.cfg":
             server_arguments.extend(
                 ["-c", "adapter speed %s" % adapter_speed]
             )

@@ -368,10 +368,12 @@ elif upload_protocol in debug_tools:
     ]
     openocd_args.extend(
         debug_tools.get(upload_protocol).get("server").get("arguments", []))
-    if env.GetProjectOption("debug_speed"):
-        openocd_args.extend(
-            ["-c", "adapter speed %s" % env.GetProjectOption("debug_speed")]
-        )
+    # always use a default speed directive of 1000khz or an otherwise configured speed
+    # otherwise, flash failures were observed
+    speed = env.GetProjectOption("debug_speed") or "1000"
+    openocd_args.extend(
+        ["-c", "adapter speed %s" % speed]
+    )
     if "uploadfs" in COMMAND_LINE_TARGETS:
         # filesystem upload. use FS_START.
         openocd_args.extend([
