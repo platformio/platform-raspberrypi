@@ -168,7 +168,7 @@ def fetch_fs_size(env):
             "Available sketch size with current "
             "config would be %d bytes.\n" % maximum_size)
         sys.stderr.flush()
-        env.Exit(-1)
+        env.Exit(1)
 
     env["PICO_FLASH_LENGTH"] = flash_length
     env["PICO_EEPROM_START"] = eeprom_start

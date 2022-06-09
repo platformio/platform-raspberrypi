@@ -31,10 +31,10 @@
       "owner": "platformio",
       "version": "~1.90201.0"
     },
-    "toolchain-pico": {
+    "toolchain-rp2040-earlephilhower": {
       "type": "toolchain", 
       "optional": true,
-      "owner": "maxgerhardt",
+      "owner": "earlephilhower",
       "version": "~5.100300.0"
     },
     "framework-arduino-mbed": {
@@ -46,19 +46,19 @@
     "framework-arduinopico": {
       "type": "framework",
       "optional": true,
-      "owner": "maxgerhardt",
-      "version": "~1.10902.0"
+      "owner": "earlephilhower",
+      "version": "https://github.com/earlephilhower/arduino-pico.git"
     },
     "tool-rp2040tools": {
       "type": "uploader",
       "owner": "platformio",
       "version": "~1.0.2"
     },
-    "tool-openocd-raspberrypi": {
+    "tool-openocd-rp2040-earlephilhower": {
       "type": "uploader",
       "optional": true,
-      "owner": "platformio",
-      "version": "~2.1100.0"
+      "owner": "earlephilhower",
+      "version": "~5.100300.0"
     },
     "tool-jlink": {
       "type": "uploader",
@@ -66,11 +66,11 @@
       "owner": "platformio",
       "version": "~1.72000.0"
     },
-    "tool-mklittlefs": {
+    "tool-mklittlefs-rp2040-earlephilhower": {
       "type": "uploader",
       "optional": true,
-      "owner": "platformio",
-      "version": "~1.203.0"
+      "owner": "earlephilhower",
+      "version": "~5.100300.0"
     }
   }
 }

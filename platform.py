@@ -37,13 +37,13 @@ class RaspberrypiPlatform(PlatformBase):
             if build_core == "arduino":
                 self.frameworks["arduino"]["package"] = "framework-arduino-mbed"
                 self.packages["framework-arduinopico"]["optional"] = True
-                self.packages["toolchain-pico"]["optional"] = True 
-                self.packages.pop("toolchain-pico", None)
+                self.packages["toolchain-rp2040-earlephilhower"]["optional"] = True 
+                self.packages.pop("toolchain-rp2040-earlephilhower", None)
             elif build_core == "earlephilhower":
                 self.frameworks["arduino"]["package"] = "framework-arduinopico"
                 self.packages["framework-arduino-mbed"]["optional"] = True
                 self.packages.pop("toolchain-gccarmnoneeabi", None)
-                self.packages["toolchain-pico"]["optional"] = False                
+                self.packages["toolchain-rp2040-earlephilhower"]["optional"] = False                
             else:
                 sys.stderr.write(
                     "Error! Unknown build.core value '%s'. Don't know which Arduino core package to use." % build_core)
@@ -117,7 +117,7 @@ class RaspberrypiPlatform(PlatformBase):
                 debug["tools"][link] = {
                     "server": {
                         "executable": "bin/openocd",
-                        "package": "tool-openocd-raspberrypi",
+                        "package": "tool-openocd-rp2040-earlephilhower",
                         "arguments": [
                             "-s", "$PACKAGE_DIR/share/openocd/scripts",
                             "-f", "interface/%s.cfg" % link,
