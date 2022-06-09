@@ -12,11 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
-import copy
 import platform
 
-from platformio.managers.platform import PlatformBase
+from platformio.public import PlatformBase
 
 
 class RaspberrypiPlatform(PlatformBase):
@@ -50,7 +48,7 @@ class RaspberrypiPlatform(PlatformBase):
 
         # if we want to build a filesystem, we need the tools.
         if "buildfs" in targets:
-            self.packages['tool-mklittlefs']['optional'] = False
+            self.packages['tool-mklittlefs-rp2040-earlephilhower']['optional'] = False
 
         # configure J-LINK tool
         jlink_conds = [
@@ -67,16 +65,16 @@ class RaspberrypiPlatform(PlatformBase):
         if not any(jlink_conds) and jlink_pkgname in self.packages:
             del self.packages[jlink_pkgname]
 
-        return PlatformBase.configure_default_packages(self, variables, targets)
+        return super().configure_default_packages(variables, targets)
 
     def get_boards(self, id_=None):
-        result = PlatformBase.get_boards(self, id_)
+        result = super().get_boards(id_)
         if not result:
             return result
         if id_:
             return self._add_default_debug_tools(result)
         else:
-            for key, value in result.items():
+            for key in result:
                 result[key] = self._add_default_debug_tools(result[key])
         return result
 
@@ -131,7 +129,6 @@ class RaspberrypiPlatform(PlatformBase):
 
     def configure_debug_session(self, debug_config):
         adapter_speed = debug_config.speed or "5000"
-        
         server_options = debug_config.server or {}
         server_arguments = server_options.get("arguments", [])
         if "interface/cmsis-dap.cfg" in server_arguments:

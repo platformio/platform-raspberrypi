@@ -15,12 +15,11 @@
 import sys
 from platform import system
 from os import makedirs
-from os.path import isdir, join, isfile
-from shutil import copyfile
+from os.path import isdir, join
 import re
 import time
 
-from platformio.util import get_serial_ports
+from platformio.public import list_serial_ports
 
 from SCons.Script import (ARGUMENTS, COMMAND_LINE_TARGETS, AlwaysBuild,
                           Builder, Default, DefaultEnvironment)
@@ -32,7 +31,7 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
         upload_options = env.BoardConfig().get("upload", {})
 
     env.AutodetectUploadPort()
-    before_ports = get_serial_ports()
+    before_ports = list_serial_ports()
 
     if upload_options.get("use_1200bps_touch", False):
         env.TouchSerialPort("$UPLOAD_PORT", 1200)
@@ -239,7 +238,7 @@ def _update_max_upload_size(env):
     fetch_fs_size(env)
     env.BoardConfig().update("upload.maximum_size", env["PICO_FLASH_LENGTH"])
 
-# update max upload size based on CSV file
+# update max upload size based on set sketch size (or raw maximum size)
 if env.get("PIOMAINPROG"):
     env.AddPreAction(
         "checkprogsize",
@@ -391,9 +390,6 @@ elif upload_protocol in debug_tools:
             "tool-openocd-raspberrypi") or "")
         for f in openocd_args
     ]
-    # use ELF file for upload, not bin (target_firm). otherwise needs
-    # offset 0x10000000
-    #upload_source = target_elf
     env.Replace(
         UPLOADER="openocd",
         UPLOADERFLAGS=openocd_args,
