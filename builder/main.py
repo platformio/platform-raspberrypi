@@ -150,27 +150,26 @@ def fetch_fs_size(env):
     filesystem_size = board.get("build.filesystem_size", "0MB")
     filesystem_size_int = convert_size_expression_to_int(filesystem_size)
 
-    maximum_size = flash_size - 4096 - filesystem_size_int
+    maximum_sketch_size = flash_size - 4096 - filesystem_size_int
 
     print("Flash size: %.2fMB" % (flash_size / 1024.0 / 1024.0))
-    print("Sketch size: %.2fMB" % (maximum_size / 1024.0 / 1024.0))
+    print("Sketch size: %.2fMB" % (maximum_sketch_size / 1024.0 / 1024.0))
     print("Filesystem size: %.2fMB" % (filesystem_size_int / 1024.0 / 1024.0))
 
-    flash_length = maximum_size
     eeprom_start = 0x10000000 + flash_size - 4096
     fs_start = 0x10000000 + flash_size - 4096 - filesystem_size_int
     fs_end = 0x10000000 + flash_size - 4096
 
-    if maximum_size <= 0:
+    if maximum_sketch_size <= 0:
         sys.stderr.write(
             "Error: Filesystem too large for given flash. "
             "Can at max be flash size - 4096 bytes. "
             "Available sketch size with current "
-            "config would be %d bytes.\n" % maximum_size)
+            "config would be %d bytes.\n" % maximum_sketch_size)
         sys.stderr.flush()
         env.Exit(1)
 
-    env["PICO_FLASH_LENGTH"] = flash_length
+    env["PICO_FLASH_LENGTH"] = maximum_sketch_size
     env["PICO_EEPROM_START"] = eeprom_start
     env["FS_START"] = fs_start
     env["FS_END"] = fs_end
@@ -179,10 +178,10 @@ def fetch_fs_size(env):
     env["FS_PAGE"] = 256
     env["FS_BLOCK"] = 4096
 
-    print("Maximium size: %d Flash Length: %d "
-        "EEPROM Start: %d Filesystem start %d "
-        "Filesystem end %s" % 
-        (maximum_size,flash_length, eeprom_start, fs_start, fs_end))
+    print("Maximium Sketch size: %d "
+        "EEPROM start: %s Filesystem start: %s "
+        "Filesystem end: %s" % 
+        (maximum_sketch_size, hex(eeprom_start), hex(fs_start), hex(fs_end)))
 
 
 def __fetch_fs_size(target, source, env):
