@@ -15,9 +15,10 @@
 import sys
 from platform import system
 from os import makedirs
-from os.path import isdir, join
+from os.path import isdir, join, isfile
 import re
 import time
+from shutil import copyfile
 
 from platformio.public import list_serial_ports
 
