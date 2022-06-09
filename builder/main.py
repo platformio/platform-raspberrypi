@@ -381,14 +381,11 @@ elif upload_protocol in debug_tools:
         # normal firmware upload. flash starts at 0x10000000
         openocd_args.extend([
             "-c", "program {$SOURCE} %s verify reset; shutdown;" %
-            # board.get("upload.offset_address", "0x10000000")
             board.get("upload.offset_address", "") 
-           #because of the logic selecting elf or firm (bin), we need to default to no offset because we already defaulted to elf a few lines below when no offset is needed
-           # programming fails otherwise
         ])
     openocd_args = [
         f.replace("$PACKAGE_DIR", platform.get_package_dir(
-            "tool-openocd-raspberrypi") or "")
+            "tool-openocd-rp2040-earlephilhower") or "")
         for f in openocd_args
     ]
     env.Replace(
