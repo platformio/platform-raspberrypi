@@ -45,6 +45,7 @@ class RaspberrypiPlatform(PlatformBase):
             else:
                 sys.stderr.write(
                     "Error! Unknown build.core value '%s'. Don't know which Arduino core package to use." % build_core)
+                env.Exit(1)
 
         # if we want to build a filesystem, we need the tools.
         if "buildfs" in targets:
@@ -131,7 +132,7 @@ class RaspberrypiPlatform(PlatformBase):
         adapter_speed = debug_config.speed or "1000"
         server_options = debug_config.server or {}
         server_arguments = server_options.get("arguments", [])
-        if "interface/cmsis-dap.cfg" in server_arguments or "interface/picoprobe.cfg":
+        if "interface/cmsis-dap.cfg" in server_arguments or "interface/picoprobe.cfg" in server_arguments:
             server_arguments.extend(
                 ["-c", "adapter speed %s" % adapter_speed]
             )
