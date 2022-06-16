@@ -210,7 +210,7 @@ env.Append(
 )
 
 # store function to get infno about filesystems for builder scripts.
-env["fetch_fs_size"] = fetch_fs_size
+env["__fetch_fs_size"] = fetch_fs_size
 
 #
 # Target: Build executable and linkable firmware
@@ -249,9 +249,6 @@ if env.get("PIOMAINPROG"):
         env.VerboseAction(
             lambda source, target, env: _update_max_upload_size(env),
             "Retrieving maximum program size $SOURCE"))
-# remove after PIO Core 3.6 release
-elif set(["checkprogsize", "upload"]) & set(COMMAND_LINE_TARGETS):
-    _update_max_upload_size(env)
 
 #
 # Target: Print binary size
@@ -295,12 +292,11 @@ def UploadUF2ToDisk(target, source, env):
         "Firmware has been successfully uploaded.\n"
         "(Some boards may require manual hard reset)"
     )
-env.UploadUF2ToDisk = UploadUF2ToDisk
 
 if upload_protocol == "mbed":
     upload_actions = [
         env.VerboseAction(env.AutodetectUploadPort, "Looking for upload disk..."),
-        env.VerboseAction(env.UploadUF2ToDisk, "Uploading $SOURCE")
+        env.VerboseAction(UploadUF2ToDisk, "Uploading $SOURCE")
     ]
 elif upload_protocol == "picotool":
     env.Replace(
