@@ -19,3 +19,11 @@ $ pio run --target upload
 # Clean build files
 $ pio run --target clean
 ```
+
+## Notes
+
+For Raspberry Pi Pico devices, two Arduino cores exist:
+* https://github.com/arduino/ArduinoCore-mbed
+* https://github.com/earlephilhower/arduino-pico
+
+This examples showcases how to use both of these cores in the `platformio.ini`.
