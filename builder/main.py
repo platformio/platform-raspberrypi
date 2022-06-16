@@ -312,7 +312,7 @@ elif upload_protocol == "picotool":
                 "load",
                 "--verify"
             ],
-            UPLOADCMD="$UPLOADER $UPLOADERFLAGS $SOURCES --offset ${hex(FS_START)}",
+            UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES --offset ${hex(FS_START)}',
         )
 
     upload_actions = [
