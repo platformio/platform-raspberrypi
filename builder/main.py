@@ -149,16 +149,19 @@ def fetch_fs_size(env):
     flash_size = board.get("upload.maximum_size")
     filesystem_size = board.get("build.filesystem_size", "0MB")
     filesystem_size_int = convert_size_expression_to_int(filesystem_size)
+    # last 4K are allocated for EEPROM emulation in flash.
+    # see https://github.com/earlephilhower/arduino-pico/blob/3414b73172d307e9dc901f7fee83b41112f73457/libraries/EEPROM/EEPROM.cpp#L43-L46
+    eeprom_size = 4096
 
-    maximum_sketch_size = flash_size - 4096 - filesystem_size_int
+    maximum_sketch_size = flash_size - eeprom_size - filesystem_size_int
 
     print("Flash size: %.2fMB" % (flash_size / 1024.0 / 1024.0))
     print("Sketch size: %.2fMB" % (maximum_sketch_size / 1024.0 / 1024.0))
     print("Filesystem size: %.2fMB" % (filesystem_size_int / 1024.0 / 1024.0))
 
-    eeprom_start = 0x10000000 + flash_size - 4096
-    fs_start = 0x10000000 + flash_size - 4096 - filesystem_size_int
-    fs_end = 0x10000000 + flash_size - 4096
+    eeprom_start = 0x10000000 + flash_size - eeprom_size
+    fs_start = 0x10000000 + flash_size - eeprom_size - filesystem_size_int
+    fs_end = 0x10000000 + flash_size - eeprom_size
 
     if maximum_sketch_size <= 0:
         sys.stderr.write(
@@ -173,7 +176,7 @@ def fetch_fs_size(env):
     env["PICO_EEPROM_START"] = eeprom_start
     env["FS_START"] = fs_start
     env["FS_END"] = fs_end
-    # LittleFS configuration paramters taken from
+    # LittleFS configuration parameters taken from
     # https://github.com/earlephilhower/arduino-pico-littlefs-plugin/blob/master/src/PicoLittleFS.java
     env["FS_PAGE"] = 256
     env["FS_BLOCK"] = 4096
@@ -207,7 +210,7 @@ env.Append(
 )
 
 # store function to get infno about filesystems for builder scripts.
-env["fetch_fs_size"] = fetch_fs_size
+env["__fetch_fs_size"] = fetch_fs_size
 
 #
 # Target: Build executable and linkable firmware
@@ -246,9 +249,6 @@ if env.get("PIOMAINPROG"):
         env.VerboseAction(
             lambda source, target, env: _update_max_upload_size(env),
             "Retrieving maximum program size $SOURCE"))
-# remove after PIO Core 3.6 release
-elif set(["checkprogsize", "upload"]) & set(COMMAND_LINE_TARGETS):
-    _update_max_upload_size(env)
 
 #
 # Target: Print binary size
@@ -292,12 +292,11 @@ def UploadUF2ToDisk(target, source, env):
         "Firmware has been successfully uploaded.\n"
         "(Some boards may require manual hard reset)"
     )
-env.UploadUF2ToDisk = UploadUF2ToDisk
 
 if upload_protocol == "mbed":
     upload_actions = [
         env.VerboseAction(env.AutodetectUploadPort, "Looking for upload disk..."),
-        env.VerboseAction(env.UploadUF2ToDisk, "Uploading $SOURCE")
+        env.VerboseAction(UploadUF2ToDisk, "Uploading $SOURCE")
     ]
 elif upload_protocol == "picotool":
     env.Replace(
@@ -313,7 +312,7 @@ elif upload_protocol == "picotool":
                 "load",
                 "--verify"
             ],
-            UPLOADCMD="$UPLOADER $UPLOADERFLAGS $SOURCES --offset ${hex(FS_START)}",
+            UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES --offset ${hex(FS_START)}',
         )
 
     upload_actions = [

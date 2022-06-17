@@ -49,7 +49,7 @@ class RaspberrypiPlatform(PlatformBase):
 
         # if we want to build a filesystem, we need the tools.
         if "buildfs" in targets:
-            self.packages['tool-mklittlefs-rp2040-earlephilhower']['optional'] = False
+            self.packages["tool-mklittlefs-rp2040-earlephilhower"]["optional"] = False
 
         # configure J-LINK tool
         jlink_conds = [

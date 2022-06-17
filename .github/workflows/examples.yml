@@ -10,8 +10,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
         example:
           - "examples/arduino-blink"
-          - "examples/arduino-blink"
-          - "examples/arduino-blink-earlephilhower"
+          - "examples/arduino-external-libs"
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
