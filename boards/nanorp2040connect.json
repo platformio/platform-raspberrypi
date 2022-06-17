@@ -1,5 +1,15 @@
 {
   "build": {
+    "arduino": {
+      "earlephilhower": {
+        "variant": "arduino_nano_connect",
+        "boot2_source": "boot2_w25q080_2_padded_checksum.S",
+        "usb_pid": "0x0058",
+        "usb_vid": "0x2341",
+        "usb_manufacturer": "Arduino",
+        "usb_product" : "Arduino Nano RP2040 Connect"
+      }
+    },
     "core": "arduino",
     "cpu": "cortex-m0plus",
     "extra_flags": "-D ARDUINO_NANO_RP2040_CONNECT -DARDUINO_ARCH_RP2040",
@@ -15,17 +25,7 @@
       ]
     ],
     "mcu": "rp2040",
-    "variant": "NANO_RP2040_CONNECT",
-    "arduino": {
-      "earlephilhower": {
-        "variant": "arduino_nano_connect",
-        "boot2_source": "boot2_w25q080_2_padded_checksum.S",
-        "usb_pid": "0x0058",
-        "usb_vid": "0x2341",
-        "usb_manufacturer": "Arduino",
-        "usb_product" : "Arduino Nano RP2040 Connect"
-      }
-    }
+    "variant": "NANO_RP2040_CONNECT"
   },
   "debug": {
     "jlink_device": "RP2040_M0_0",

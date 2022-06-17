@@ -25,97 +25,6 @@ from platformio.public import list_serial_ports
 from SCons.Script import (ARGUMENTS, COMMAND_LINE_TARGETS, AlwaysBuild,
                           Builder, Default, DefaultEnvironment)
 
-
-def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
-    upload_options = {}
-    if "BOARD" in env:
-        upload_options = env.BoardConfig().get("upload", {})
-
-    env.AutodetectUploadPort()
-    before_ports = list_serial_ports()
-
-    if upload_options.get("use_1200bps_touch", False):
-        env.TouchSerialPort("$UPLOAD_PORT", 1200)
-
-    if upload_options.get("wait_for_upload_port", False):
-        env.Replace(UPLOAD_PORT=env.WaitForNewSerialPort(before_ports))
-
-
-def generate_uf2(target, source, env):
-    elf_file = target[0].get_path()
-    env.Execute(
-        " ".join(
-            [
-                "elf2uf2",
-                '"%s"' % elf_file,
-                '"%s"' % elf_file.replace(".elf", ".uf2"),
-            ]
-        )
-    )
-
-
-env = DefaultEnvironment()
-platform = env.PioPlatform()
-board = env.BoardConfig()
-
-env.Replace(
-    AR="arm-none-eabi-ar",
-    AS="arm-none-eabi-as",
-    CC="arm-none-eabi-gcc",
-    CXX="arm-none-eabi-g++",
-    GDB="arm-none-eabi-gdb",
-    OBJCOPY="arm-none-eabi-objcopy",
-    RANLIB="arm-none-eabi-ranlib",
-    SIZETOOL="arm-none-eabi-size",
-
-    ARFLAGS=["rc"],
-
-    MKFSTOOL="mklittlefs",
-    PICO_FS_IMAGE_NAME=env.get("PICO_FS_IMAGE_NAME", "littlefs"),
-
-    SIZEPROGREGEXP=r"^(?:\.text|\.data|\.rodata|\.text.align|\.ARM.exidx)\s+(\d+).*",
-    SIZEDATAREGEXP=r"^(?:\.data|\.bss|\.noinit)\s+(\d+).*",
-    SIZECHECKCMD="$SIZETOOL -A -d $SOURCES",
-    SIZEPRINTCMD='$SIZETOOL -B -d $SOURCES',
-
-    PROGSUFFIX=".elf"
-)
-
-# Allow user to override via pre:script
-if env.get("PROGNAME", "program") == "program":
-    env.Replace(PROGNAME="firmware")
-
-env.Append(
-    BUILDERS=dict(
-        ElfToBin=Builder(
-            action=env.VerboseAction(" ".join([
-                "$OBJCOPY",
-                "-O",
-                "binary",
-                "$SOURCES",
-                "$TARGET"
-            ]), "Building $TARGET"),
-            suffix=".bin"
-        ),
-        ElfToHex=Builder(
-            action=env.VerboseAction(" ".join([
-                "$OBJCOPY",
-                "-O",
-                "ihex",
-                "-R",
-                ".eeprom",
-                "$SOURCES",
-                "$TARGET"
-            ]), "Building $TARGET"),
-            suffix=".hex"
-        )
-    )
-)
-
-if not env.get("PIOFRAMEWORK"):
-    env.SConscript("frameworks/_bare.py")
-
-
 def convert_size_expression_to_int(expression):
     conversion_factors = {
         "M": 1024*1024,
@@ -191,6 +100,97 @@ def __fetch_fs_size(target, source, env):
     fetch_fs_size(env)
     return (target, source)
 
+def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
+    upload_options = {}
+    if "BOARD" in env:
+        upload_options = env.BoardConfig().get("upload", {})
+
+    env.AutodetectUploadPort()
+    before_ports = list_serial_ports()
+
+    if upload_options.get("use_1200bps_touch", False):
+        env.TouchSerialPort("$UPLOAD_PORT", 1200)
+
+    if upload_options.get("wait_for_upload_port", False):
+        env.Replace(UPLOAD_PORT=env.WaitForNewSerialPort(before_ports))
+
+
+def generate_uf2(target, source, env):
+    elf_file = target[0].get_path()
+    env.Execute(
+        " ".join(
+            [
+                "elf2uf2",
+                '"%s"' % elf_file,
+                '"%s"' % elf_file.replace(".elf", ".uf2"),
+            ]
+        )
+    )
+
+
+env = DefaultEnvironment()
+platform = env.PioPlatform()
+board = env.BoardConfig()
+
+env.Replace(
+    __fetch_fs_size=fetch_fs_size,
+
+    AR="arm-none-eabi-ar",
+    AS="arm-none-eabi-as",
+    CC="arm-none-eabi-gcc",
+    CXX="arm-none-eabi-g++",
+    GDB="arm-none-eabi-gdb",
+    OBJCOPY="arm-none-eabi-objcopy",
+    RANLIB="arm-none-eabi-ranlib",
+    SIZETOOL="arm-none-eabi-size",
+
+    ARFLAGS=["rc"],
+
+    MKFSTOOL="mklittlefs",
+    PICO_FS_IMAGE_NAME=env.get("PICO_FS_IMAGE_NAME", "littlefs"),
+
+    SIZEPROGREGEXP=r"^(?:\.text|\.data|\.rodata|\.text.align|\.ARM.exidx)\s+(\d+).*",
+    SIZEDATAREGEXP=r"^(?:\.data|\.bss|\.noinit)\s+(\d+).*",
+    SIZECHECKCMD="$SIZETOOL -A -d $SOURCES",
+    SIZEPRINTCMD='$SIZETOOL -B -d $SOURCES',
+
+    PROGSUFFIX=".elf"
+)
+
+# Allow user to override via pre:script
+if env.get("PROGNAME", "program") == "program":
+    env.Replace(PROGNAME="firmware")
+
+env.Append(
+    BUILDERS=dict(
+        ElfToBin=Builder(
+            action=env.VerboseAction(" ".join([
+                "$OBJCOPY",
+                "-O",
+                "binary",
+                "$SOURCES",
+                "$TARGET"
+            ]), "Building $TARGET"),
+            suffix=".bin"
+        ),
+        ElfToHex=Builder(
+            action=env.VerboseAction(" ".join([
+                "$OBJCOPY",
+                "-O",
+                "ihex",
+                "-R",
+                ".eeprom",
+                "$SOURCES",
+                "$TARGET"
+            ]), "Building $TARGET"),
+            suffix=".hex"
+        )
+    )
+)
+
+if not env.get("PIOFRAMEWORK"):
+    env.SConscript("frameworks/_bare.py")
+
 env.Append(
     BUILDERS=dict(
         DataToBin=Builder(
@@ -208,9 +208,6 @@ env.Append(
         )
     )
 )
-
-# store function to get infno about filesystems for builder scripts.
-env["__fetch_fs_size"] = fetch_fs_size
 
 #
 # Target: Build executable and linkable firmware
@@ -258,9 +255,6 @@ target_size = env.Alias(
     "size", target_elf,
     env.VerboseAction("$SIZEPRINTCMD", "Calculating size $SOURCE"))
 AlwaysBuild(target_size)
-
-def DelayBeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
-    time.sleep(0.5)
 
 def RebootPico(target, source, env): 
     time.sleep(0.5)
@@ -322,7 +316,8 @@ elif upload_protocol == "picotool":
 
     # picotool seems to need just a tiny bit of delay, but rp2040 load not..
     if "uploadfs" in COMMAND_LINE_TARGETS:
-        upload_actions.insert(1, env.VerboseAction(DelayBeforeUpload, "Delaying a tiny bit..."))
+        upload_actions.insert(1, env.VerboseAction(
+            lambda source, target, env: time.sleep(0.5), "Delaying a tiny bit..."))
         # reboot after filesystem upload
         upload_actions.append(env.VerboseAction(RebootPico, "Rebooting device..."))
 
