@@ -331,7 +331,7 @@ elif upload_protocol.startswith("jlink"):
             makedirs(build_dir)
         script_path = join(build_dir, "upload.jlink")
         upload_addr = hex(env["FS_START"]) if "uploadfs" in COMMAND_LINE_TARGETS else board.get(
-                "upload.offset_address", "0x0")
+            "upload.offset_address", "0x0")
         commands = [
             "h",
             "loadbin %s, %s" % (source, upload_addr),
