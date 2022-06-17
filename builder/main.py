@@ -256,9 +256,6 @@ target_size = env.Alias(
     env.VerboseAction("$SIZEPRINTCMD", "Calculating size $SOURCE"))
 AlwaysBuild(target_size)
 
-def DelayBeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
-    time.sleep(0.5)
-
 def RebootPico(target, source, env): 
     time.sleep(0.5)
     env.Execute(
@@ -319,7 +316,8 @@ elif upload_protocol == "picotool":
 
     # picotool seems to need just a tiny bit of delay, but rp2040 load not..
     if "uploadfs" in COMMAND_LINE_TARGETS:
-        upload_actions.insert(1, env.VerboseAction(DelayBeforeUpload, "Delaying a tiny bit..."))
+        upload_actions.insert(1, env.VerboseAction(
+            lambda source, target, env: time.sleep(0.5), "Delaying a tiny bit..."))
         # reboot after filesystem upload
         upload_actions.append(env.VerboseAction(RebootPico, "Rebooting device..."))
 
