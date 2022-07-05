@@ -29,7 +29,7 @@
     "toolchain-gccarmnoneeabi": {
       "type": "toolchain",
       "owner": "platformio",
-      "version": "~1.90201.0"
+      "version": ">=1.90201.0,<1.90302.0"
     },
     "toolchain-rp2040-earlephilhower": {
       "type": "toolchain", 
