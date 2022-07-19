@@ -47,7 +47,7 @@
       "type": "framework",
       "optional": true,
       "owner": "earlephilhower",
-      "version": "~1.20202.0"
+      "version": "~1.20301.0"
     },
     "tool-rp2040tools": {
       "type": "uploader",
