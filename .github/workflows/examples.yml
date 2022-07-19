@@ -10,6 +10,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
         example:
           - "examples/arduino-blink"
+          - "examples/arduino-wifi-scan"
           - "examples/arduino-external-libs"
     runs-on: ${{ matrix.os }}
     steps:
