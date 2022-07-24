@@ -22,14 +22,20 @@
   "frameworks": {
     "arduino": {
       "package": "framework-arduino-mbed",
-      "script": "builder/frameworks/arduino/mbed-core/arduino-core-mbed.py"
+      "script": "builder/frameworks/arduino/arduino.py"
     }
   },
   "packages": {
     "toolchain-gccarmnoneeabi": {
       "type": "toolchain",
       "owner": "platformio",
-      "version": "~1.90201.0"
+      "version": ">=1.90201.0,<1.90302.0"
+    },
+    "toolchain-rp2040-earlephilhower": {
+      "type": "toolchain", 
+      "optional": true,
+      "owner": "earlephilhower",
+      "version": "5.100300.220714"
     },
     "framework-arduino-mbed": {
       "type": "framework",
@@ -37,22 +43,34 @@
       "owner": "platformio",
       "version": "~3.1.1"
     },
+    "framework-arduinopico": {
+      "type": "framework",
+      "optional": true,
+      "owner": "earlephilhower",
+      "version": "https://github.com/earlephilhower/arduino-pico.git#2397d034e313281fa7fc02aae2aba0bb4fa10b6e"
+    },
     "tool-rp2040tools": {
       "type": "uploader",
       "owner": "platformio",
       "version": "~1.0.2"
     },
-    "tool-openocd-raspberrypi": {
+    "tool-openocd-rp2040-earlephilhower": {
       "type": "uploader",
       "optional": true,
-      "owner": "platformio",
-      "version": "~2.1100.0"
+      "owner": "earlephilhower",
+      "version": "~5.100300.0"
     },
     "tool-jlink": {
       "type": "uploader",
       "optional": true,
       "owner": "platformio",
       "version": "^1.72000.0"
+    },
+    "tool-mklittlefs-rp2040-earlephilhower": {
+      "type": "uploader",
+      "optional": true,
+      "owner": "earlephilhower",
+      "version": "~5.100300.0"
     }
   }
 }

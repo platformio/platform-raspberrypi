@@ -2,30 +2,27 @@
   "build": {
     "arduino": {
       "earlephilhower": {
-        "variant": "arduino_nano_connect",
         "boot2_source": "boot2_w25q080_2_padded_checksum.S",
-        "usb_pid": "0x0058",
-        "usb_vid": "0x2341",
-        "usb_manufacturer": "Arduino",
-        "usb_product" : "Arduino Nano RP2040 Connect"
+        "usb_vid": "0x239A",
+        "usb_pid": "0x8105"
       }
     },
-    "core": "arduino",
+    "core": "earlephilhower",
     "cpu": "cortex-m0plus",
-    "extra_flags": "-D ARDUINO_NANO_RP2040_CONNECT -DARDUINO_ARCH_RP2040",
+    "extra_flags": "-D ARDUINO_ADAFRUIT_KB2040_RP2040 -DARDUINO_ARCH_RP2040 -DUSBD_MAX_POWER_MA=250",
     "f_cpu": "133000000L",
     "hwids": [
       [
-        "0x2341",
-        "0x005E"
+        "0x2E8A",
+        "0x00C0"
       ],
       [
-        "0x2341",
-        "0x805E"
+        "0x239A",
+        "0x8105"
       ]
     ],
     "mcu": "rp2040",
-    "variant": "NANO_RP2040_CONNECT"
+    "variant": "adafruit_kb2040"
   },
   "debug": {
     "jlink_device": "RP2040_M0_0",
@@ -35,10 +32,10 @@
   "frameworks": [
     "arduino"
   ],
-  "name": "Arduino Nano RP2040 Connect",
+  "name": "KB2040",
   "upload": {
     "maximum_ram_size": 270336,
-    "maximum_size": 2097152,
+    "maximum_size": 8388608,
     "require_upload_port": true,
     "native_usb": true,
     "use_1200bps_touch": true,
@@ -52,6 +49,6 @@
       "picoprobe"
     ]
   },
-  "url": "https://blog.arduino.cc/2021/01/20/welcome-raspberry-pi-to-the-world-of-microcontrollers/",
-  "vendor": "Arduino"
+  "url": "https://www.raspberrypi.org/products/raspberry-pi-pico/",
+  "vendor": "Adafruit"
 }

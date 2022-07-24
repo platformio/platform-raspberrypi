@@ -23,6 +23,34 @@ class RaspberrypiPlatform(PlatformBase):
         return True
 
     def configure_default_packages(self, variables, targets):
+        # configure arduino core package.
+        # select the right one based on the build.core, disable other one.
+        board = variables.get("board")
+        board_config = self.board_config(board)
+        build_core = variables.get(
+            "board_build.core", board_config.get("build.core", "arduino"))
+
+        frameworks = variables.get("pioframework", [])
+        if "arduino" in frameworks:
+            if build_core == "arduino":
+                self.frameworks["arduino"]["package"] = "framework-arduino-mbed"
+                self.packages["framework-arduinopico"]["optional"] = True
+                self.packages["toolchain-rp2040-earlephilhower"]["optional"] = True 
+                self.packages.pop("toolchain-rp2040-earlephilhower", None)
+            elif build_core == "earlephilhower":
+                self.frameworks["arduino"]["package"] = "framework-arduinopico"
+                self.packages["framework-arduino-mbed"]["optional"] = True
+                self.packages.pop("toolchain-gccarmnoneeabi", None)
+                self.packages["toolchain-rp2040-earlephilhower"]["optional"] = False                
+            else:
+                sys.stderr.write(
+                    "Error! Unknown build.core value '%s'. Don't know which Arduino core package to use." % build_core)
+                env.Exit(1)
+
+        # if we want to build a filesystem, we need the tools.
+        if "buildfs" in targets:
+            self.packages["tool-mklittlefs-rp2040-earlephilhower"]["optional"] = False
+
         # configure J-LINK tool
         jlink_conds = [
             "jlink" in variables.get(option, "")
@@ -58,7 +86,7 @@ class RaspberrypiPlatform(PlatformBase):
         if "tools" not in debug:
             debug["tools"] = {}
 
-        for link in ("cmsis-dap", "jlink", "raspberrypi-swd"):
+        for link in ("cmsis-dap", "jlink", "raspberrypi-swd", "picoprobe"):
             if link not in upload_protocols or link in debug["tools"]:
                 continue
 
@@ -83,11 +111,12 @@ class RaspberrypiPlatform(PlatformBase):
                 }
             else:
                 openocd_target = debug.get("openocd_target")
-                assert openocd_target, ("Missing target configuration for %s" % board.id)
+                assert openocd_target, ("Missing target configuration for %s" %
+                                        board.id)
                 debug["tools"][link] = {
                     "server": {
                         "executable": "bin/openocd",
-                        "package": "tool-openocd-raspberrypi",
+                        "package": "tool-openocd-rp2040-earlephilhower",
                         "arguments": [
                             "-s", "$PACKAGE_DIR/share/openocd/scripts",
                             "-f", "interface/%s.cfg" % link,
@@ -100,10 +129,10 @@ class RaspberrypiPlatform(PlatformBase):
         return board
 
     def configure_debug_session(self, debug_config):
-        adapter_speed = debug_config.speed or "5000"
+        adapter_speed = debug_config.speed or "1000"
         server_options = debug_config.server or {}
         server_arguments = server_options.get("arguments", [])
-        if "interface/cmsis-dap.cfg" in server_arguments:
+        if "interface/cmsis-dap.cfg" in server_arguments or "interface/picoprobe.cfg" in server_arguments:
             server_arguments.extend(
                 ["-c", "adapter speed %s" % adapter_speed]
             )
