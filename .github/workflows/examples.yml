@@ -27,6 +27,9 @@ jobs:
         run: |
           pip install -U https://github.com/platformio/platformio/archive/develop.zip
           pio pkg install --global --platform symlink://.
+      # OpenSSL needed for signed OTA update example
+      - name: Install OpenSSL
+        run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
             sudo apt-get install -y openssl
           elif [ "$RUNNER_OS" == "Windows" ]; then
