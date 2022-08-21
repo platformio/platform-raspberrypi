@@ -8,7 +8,7 @@ How to build PlatformIO based project
 
 ```shell
 # Change directory to example
-$ cd platform-raspberrypi/examples/arduino-blink
+$ cd platform-raspberrypi/examples/arduino-ota
 
 # Build project
 $ pio run
@@ -22,8 +22,12 @@ $ pio run --target clean
 
 ## Notes
 
-For Raspberry Pi Pico devices, two Arduino cores exist:
-* https://github.com/arduino/ArduinoCore-mbed
-* https://github.com/earlephilhower/arduino-pico
+This examples showcases the usage of Over-The-Air (OTA) updates with the Raspberry Pi Pico W.
 
-This examples showcases how to use both of these cores in the `platformio.ini`.
+For more details, see the [documentation](https://arduino-pico.readthedocs.io/en/latest/ota.html).
+
+For the initial firmware update, use the `rpipicow_via_usb` environment.
+
+Then, open the serial monitor and note down the IP of the Pico that it outputs.
+
+Use this IP as the `upload_port` in the `rpipicow_via_ota` environment and use the "Upload" project task there.
