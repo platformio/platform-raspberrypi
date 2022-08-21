@@ -526,5 +526,7 @@ env.AddPlatformTarget("uploadfs", target_firm, upload_actions, "Upload Filesyste
 #
 # Default targets
 #
-
-Default([target_gen_header, target_buildprog, target_size])
+if target_gen_header is not None:
+    Default([target_gen_header, target_buildprog, target_size])
+else:
+    Default([target_buildprog, target_size])
