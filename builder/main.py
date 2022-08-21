@@ -228,21 +228,23 @@ env.Append(
 is_arduino_pico_build = env.BoardConfig().get("build.core", "arduino") == "earlephilhower" and "arduino" in env.get("PIOFRAMEWORK")
 target_gen_header = None
 if is_arduino_pico_build:
-    header_file =  join(env.subst("$BUILD_DIR"), "core", "Updater_Signing.h")
-    env.Prepend(CFLAGS=['-I"%s"' % join("$BUILD_DIR", "core")])
-    signing_header_cmd = env.Command(
-        join("$BUILD_DIR", "core", "Updater_Signing.h"), # $TARGET
-        join("$PROJECT_SRC_DIR", "public.key"), # $SOURCE
-        env.VerboseAction(" ".join([
-            '"$PYTHONEXE" "%s"' % join(
-                platform.get_package_dir("framework-arduinopico"), "tools", "signing.py"),
-            "--mode", "header",
-            "--publickey", '"$SOURCE"',
-            "--out", "$TARGET"
-        ]), "Generating $TARGET")
-    )
-    target_gen_header = env.Alias("gen_header", signing_header_cmd)
-    AlwaysBuild(target_gen_header)
+    pubkey = join(env.subst("$PROJECT_SRC_DIR"), "public.key")
+    if isfile(pubkey):
+        header_file =  join(env.subst("$BUILD_DIR"), "core", "Updater_Signing.h")
+        env.Prepend(CFLAGS=['-I"%s"' % join("$BUILD_DIR", "core")])
+        signing_header_cmd = env.Command(
+            join("$BUILD_DIR", "core", "Updater_Signing.h"), # $TARGET
+            join("$PROJECT_SRC_DIR", "public.key"), # $SOURCE
+            env.VerboseAction(" ".join([
+                '"$PYTHONEXE" "%s"' % join(
+                    platform.get_package_dir("framework-arduinopico"), "tools", "signing.py"),
+                "--mode", "header",
+                "--publickey", '"$SOURCE"',
+                "--out", "$TARGET"
+            ]), "Generating $TARGET")
+        )
+        target_gen_header = env.Alias("gen_header", signing_header_cmd)
+        AlwaysBuild(target_gen_header)
 
 #
 # Target: Build executable and linkable firmware
