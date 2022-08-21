@@ -14,7 +14,7 @@
 
 import sys
 from platform import system
-from os import makedirs
+from os import makedirs, remove
 from os.path import isdir, join, isfile
 import re
 import time
@@ -184,6 +184,22 @@ env.Append(
                 "$TARGET"
             ]), "Building $TARGET"),
             suffix=".hex"
+        ),
+        BinToSignedBin=Builder(
+            action=env.VerboseAction(" ".join([
+                '"$PYTHONEXE" "%s"' % join(
+                    platform.get_package_dir("framework-arduinopico") or "",
+                    "tools", "signing.py"),
+                "--mode",
+                "sign",
+                "--privatekey",
+                '"%s"' % join("$PROJECT_SRC_DIR", "private.key"),
+                "--bin",
+                "$SOURCES",
+                "--out",
+                "$TARGET"
+            ]), "Building $TARGET"),
+            suffix=".bin.signed"
         )
     )
 )
@@ -209,14 +225,30 @@ env.Append(
     )
 )
 
+is_arduino_pico_build = env.BoardConfig().get("build.core", "arduino") == "earlephilhower" and "arduino" in env.get("PIOFRAMEWORK")
+if is_arduino_pico_build:
+    pubkey = join(env.subst("$PROJECT_SRC_DIR"), "public.key")
+    if isfile(pubkey):
+        header_file =  join(env.subst("$BUILD_DIR"), "core", "Updater_Signing.h")
+        env.Prepend(CCFLAGS=['-I"%s"' % join("$BUILD_DIR", "core")])
+        env.Execute(" ".join([
+                '"$PYTHONEXE" "%s"' % join(
+                    platform.get_package_dir("framework-arduinopico"), "tools", "signing.py"),
+                "--mode", "header",
+                "--publickey", '"%s"' % join("$PROJECT_SRC_DIR", "public.key"),
+                "--out", '"%s"' % join("$BUILD_DIR", "core", "Updater_Signing.h")
+        ]))
+
 #
 # Target: Build executable and linkable firmware
 #
 
 target_elf = None
+target_signed_bin = None
 if "nobuild" in COMMAND_LINE_TARGETS:
     target_elf = join("$BUILD_DIR", "${PROGNAME}.elf")
     target_firm = join("$BUILD_DIR", "${PROGNAME}.bin")
+    target_firm = join("$BUILD_DIR", "${PROGNAME}.bin.signed")
 else:
     target_elf = env.BuildProgram()
     if set(["buildfs", "uploadfs"]) & set(COMMAND_LINE_TARGETS):
@@ -225,11 +257,14 @@ else:
         AlwaysBuild(target_firm)
     else:
         target_firm = env.ElfToBin(join("$BUILD_DIR", "${PROGNAME}"), target_elf)
+        if is_arduino_pico_build:
+            target_signed_bin = env.BinToSignedBin(join("$BUILD_DIR", "${PROGNAME}"), target_firm)
+            env.Depends(target_signed_bin, "checkprogsize")
         env.Depends(target_firm, "checkprogsize")
 
 env.AddPlatformTarget("buildfs", target_firm, target_firm, "Build Filesystem Image")
 AlwaysBuild(env.Alias("nobuild", target_firm))
-target_buildprog = env.Alias("buildprog", target_firm, target_firm)
+target_buildprog = env.Alias("buildprog", [target_firm, target_signed_bin], target_firm)
 
 env.AddPostAction(
     target_elf, env.VerboseAction(generate_uf2, "Generating UF2 image")
@@ -284,14 +319,93 @@ def UploadUF2ToDisk(target, source, env):
     copyfile(fpath, join(env.subst("$UPLOAD_PORT"), "%s.%s" % (progname, ext)))
     print(
         "Firmware has been successfully uploaded.\n"
-        "(Some boards may require manual hard reset)"
     )
+
+def TryResetPico(target, source, env):
+    upload_options = {}
+    if "BOARD" in env:
+        upload_options = env.BoardConfig().get("upload", {})
+    ports = list_serial_ports()
+    if len(ports) != 0:
+        last_port = ports[-1]["port"]
+        if upload_options.get("use_1200bps_touch", False):
+            env.TouchSerialPort(last_port, 1200)
+            time.sleep(2.0)
+
+from platformio.device.list.util import list_logical_devices
+from platformio.device.finder import is_pattern_port
+from fnmatch import fnmatch
+
+def find_rpi_disk(initial_port):
+    msdlabels = ("RPI-RP2")
+    item:str
+    for item in list_logical_devices():
+        if item["path"].startswith("/net"):
+            continue
+        if (
+            initial_port
+            and is_pattern_port(initial_port)
+            and not fnmatch(item["path"], initial_port)
+        ):
+            continue
+        mbed_pages = [join(item["path"], n) for n in ("INDEX.HTM", "INFO_UF2.TXT")]
+        if any(isfile(p) for p in mbed_pages):
+            return item["path"]
+        if item["name"] and any(l in item["name"].lower() for l in msdlabels):
+            return item["path"]
+    return None    
+
+def AutodetectPicoDisk(target, source, env):
+    initial_port = env.subst("$UPLOAD_PORT")
+    if initial_port and not is_pattern_port(initial_port):
+        print(env.subst("Using manually specified: $UPLOAD_PORT"))
+        return
+
+    if upload_protocol == "mbed":
+        env.Replace(UPLOAD_PORT=find_rpi_disk(initial_port))
+
+    if env.subst("$UPLOAD_PORT"):
+        print(env.subst("Auto-detected: $UPLOAD_PORT"))
+    else:
+        sys.stderr.write(
+            "Error: Please specify `upload_port` for environment or use "
+            "global `--upload-port` option.\n"
+            "For some development platforms it can be a USB flash "
+            "drive (i.e. /media/<user>/<device name>)\n"
+        )
+        env.Exit(1)
 
 if upload_protocol == "mbed":
     upload_actions = [
-        env.VerboseAction(env.AutodetectUploadPort, "Looking for upload disk..."),
+        env.VerboseAction(TryResetPico, "Trying to reset Pico into bootloader mode..."),
+        env.VerboseAction(AutodetectPicoDisk, "Looking for upload disk..."),
         env.VerboseAction(UploadUF2ToDisk, "Uploading $SOURCE")
     ]
+elif upload_protocol == "espota":
+    if not env.subst("$UPLOAD_PORT"):
+        sys.stderr.write(
+            "Error: Please specify IP address or host name of ESP device "
+            "using `upload_port` for build environment or use "
+            "global `--upload-port` option.\n"
+            "See https://docs.platformio.org/page/platforms/"
+            "espressif8266.html#over-the-air-ota-update\n")
+    env.Replace(
+        UPLOADER=join(
+            platform.get_package_dir("framework-arduinopico") or "",
+            "tools", "espota.py"),
+        UPLOADERFLAGS=["--debug", "--progress", "-i", "$UPLOAD_PORT", "-p", "2040"],
+        UPLOADCMD='"$PYTHONEXE" "$UPLOADER" $UPLOADERFLAGS -f $SOURCE'
+    )
+    if "uploadfs" in COMMAND_LINE_TARGETS:
+        env.Append(UPLOADERFLAGS=["-s"])
+    else:
+        # check if we have a .bin.signed file available.
+        # since the file may not be build yet, we try to predict that we will
+        # have that file if they private signing key exists.
+        if isfile(join(env.subst("$PROJECT_SRC_DIR"), "private.key")):
+            sys.stdout.write("Using signed OTA update file.")
+            upload_source = target_signed_bin
+    upload_actions = [env.VerboseAction("$UPLOADCMD", "Uploading $SOURCE")]
 elif upload_protocol == "picotool":
     env.Replace(
         UPLOADER=join(platform.get_package_dir("tool-rp2040tools") or "", "rp2040load"),
@@ -405,5 +519,4 @@ env.AddPlatformTarget("uploadfs", target_firm, upload_actions, "Upload Filesyste
 #
 # Default targets
 #
-
 Default([target_buildprog, target_size])
