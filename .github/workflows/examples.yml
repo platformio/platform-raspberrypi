@@ -28,10 +28,10 @@ jobs:
           pip install -U https://github.com/platformio/platformio/archive/develop.zip
           pio pkg install --global --platform symlink://.
           if [ "$RUNNER_OS" == "Linux" ]; then
-            apt install openssl
+            sudo apt-get install -y openssl
           elif [ "$RUNNER_OS" == "Windows" ]; then
             choco install openssl
-          elif [ "$RUNNER_OS" == "Mac" ]; then
+          elif [ "$RUNNER_OS" == "macOS " ]; then
             brew install openssl
           else
             echo "$RUNNER_OS not supported"
