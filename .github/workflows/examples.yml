@@ -25,7 +25,9 @@ jobs:
           python-version: "3.9"
       - name: Install dependencies
         run: |
-          git config --system core.longpaths true
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            git config --system core.longpaths true
+          fi
           pip install -U https://github.com/platformio/platformio/archive/develop.zip
           pio pkg install --global --platform symlink://.
       # OpenSSL needed for signed OTA update example
