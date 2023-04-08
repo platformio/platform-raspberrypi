@@ -86,7 +86,7 @@ class RaspberrypiPlatform(PlatformBase):
         if "tools" not in debug:
             debug["tools"] = {}
 
-        for link in ("cmsis-dap", "jlink", "raspberrypi-swd", "picoprobe"):
+        for link in ("blackmagic", "cmsis-dap", "jlink", "raspberrypi-swd", "picoprobe"):
             if link not in upload_protocols or link in debug["tools"]:
                 continue
 
