@@ -86,11 +86,15 @@ class RaspberrypiPlatform(PlatformBase):
         if "tools" not in debug:
             debug["tools"] = {}
 
-        for link in ("cmsis-dap", "jlink", "raspberrypi-swd", "picoprobe"):
+        for link in ("blackmagic", "cmsis-dap", "jlink", "raspberrypi-swd", "picoprobe"):
             if link not in upload_protocols or link in debug["tools"]:
                 continue
-
-            if link == "jlink":
+            if link == "blackmagic":
+                debug["tools"]["blackmagic"] = {
+                    "hwids": [["0x1d50", "0x6018"]],
+                    "require_debug_port": True
+                }
+            elif link == "jlink":
                 assert debug.get("jlink_device"), (
                     "Missed J-Link Device ID for %s" % board.id)
                 debug["tools"][link] = {

@@ -381,6 +381,28 @@ if upload_protocol == "mbed":
         env.VerboseAction(AutodetectPicoDisk, "Looking for upload disk..."),
         env.VerboseAction(UploadUF2ToDisk, "Uploading $SOURCE")
     ]
+
+elif upload_protocol.startswith("blackmagic"):
+    env.Replace(
+        UPLOADER="$GDB",
+        UPLOADERFLAGS=[
+            "-nx",
+            "--batch",
+            "-ex", "target extended-remote $UPLOAD_PORT",
+            "-ex", "monitor %s_scan" %
+            ("jtag" if upload_protocol == "blackmagic-jtag" else "swdp"),
+            "-ex", "attach 1",
+            "-ex", "load",
+            "-ex", "compare-sections",
+            "-ex", "kill"
+        ],
+        UPLOADCMD="$UPLOADER $UPLOADERFLAGS $SOURCE"
+    )
+    upload_source = target_elf
+    upload_actions = [
+        env.VerboseAction(env.AutodetectUploadPort, "Looking for BlackMagic port..."),
+        env.VerboseAction("$UPLOADCMD", "Uploading $SOURCE")
+    ]
 elif upload_protocol == "espota":
     if not env.subst("$UPLOAD_PORT"):
         sys.stderr.write(
