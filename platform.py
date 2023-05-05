@@ -15,7 +15,7 @@
 import platform
 
 from platformio.public import PlatformBase
-
+import sys
 
 class RaspberrypiPlatform(PlatformBase):
 
@@ -86,7 +86,7 @@ class RaspberrypiPlatform(PlatformBase):
         if "tools" not in debug:
             debug["tools"] = {}
 
-        for link in ("blackmagic", "cmsis-dap", "jlink", "raspberrypi-swd", "picoprobe"):
+        for link in ("blackmagic", "cmsis-dap", "jlink", "raspberrypi-swd", "picoprobe", "pico-debug"):
             if link not in upload_protocols or link in debug["tools"]:
                 continue
             if link == "blackmagic":
@@ -112,6 +112,17 @@ class RaspberrypiPlatform(PlatformBase):
                                        "JLinkGDBServer")
                     },
                     "onboard": link in debug.get("onboard_tools", [])
+                }
+            elif link == "pico-debug":
+                debug["tools"][link] = {
+                    "server": {
+                        "executable": "bin/openocd",
+                        "package": "tool-openocd-rp2040-earlephilhower",
+                        "arguments": [
+                            "-s", "$PACKAGE_DIR/share/openocd/scripts",
+                            "-f", "board/%s.cfg" % link,
+                        ]
+                    }
                 }
             else:
                 openocd_target = debug.get("openocd_target")
