@@ -3,13 +3,13 @@
     "arduino": {
       "earlephilhower": {
         "boot2_source": "boot2_w25q080_2_padded_checksum.S",
-        "usb_vid": "0x1209",
-        "usb_pid": "0x1209"
+        "usb_vid": "0x2E8A",
+        "usb_pid": "0x105F"
       }
     },
     "core": "earlephilhower",
     "cpu": "cortex-m0plus",
-    "extra_flags": "-D ARDUINO_ELECTRONICCATS_BOMBERCAT -DARDUINO_ARCH_RP2040 -DUSBD_MAX_POWER_MA=500",
+    "extra_flags": "-D ARDUINO_CHALLENGER_2040_WIFI6_BLE_RP2040 -DARDUINO_ARCH_RP2040 -DUSBD_MAX_POWER_MA=500 -DWIFIESPAT2",
     "f_cpu": "133000000L",
     "hwids": [
       [
@@ -17,12 +17,12 @@
         "0x00C0"
       ],
       [
-        "0x1209",
-        "0x1209"
+        "0x2E8A",
+        "0x105F"
       ]
     ],
     "mcu": "rp2040",
-    "variant": "electroniccats_bombercat"
+    "variant": "challenger_2040_wifi6_ble"
   },
   "debug": {
     "jlink_device": "RP2040_M0_0",
@@ -32,23 +32,25 @@
   "frameworks": [
     "arduino"
   ],
-  "name": "HunterCat NFC RP2040",
+  "name": "Challenger 2040 WiFi6/BLE",
   "upload": {
     "maximum_ram_size": 270336,
-    "maximum_size": 2097152,
+    "maximum_size": 8388608,
     "require_upload_port": true,
     "native_usb": true,
     "use_1200bps_touch": true,
     "wait_for_upload_port": false,
     "protocol": "picotool",
     "protocols": [
+      "blackmagic",
       "cmsis-dap",
       "jlink",
       "raspberrypi-swd",
       "picotool",
-      "picoprobe"
+      "picoprobe",
+      "pico-debug"
     ]
   },
   "url": "https://www.raspberrypi.org/products/raspberry-pi-pico/",
-  "vendor": "ElectronicCats"
+  "vendor": "iLabs"
 }
