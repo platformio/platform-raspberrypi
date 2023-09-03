@@ -508,12 +508,12 @@ elif upload_protocol in debug_tools:
     if "uploadfs" in COMMAND_LINE_TARGETS:
         # filesystem upload. use FS_START.
         openocd_args.extend([
-            "-c", "program {$SOURCE} ${hex(FS_START)} verify reset; shutdown;"
+            "-c", "program {$SOURCE} ${hex(FS_START)} verify; reset init; resume; shutdown;"
         ])
     else:
         # normal firmware upload. flash starts at 0x10000000
         openocd_args.extend([
-            "-c", "program {$SOURCE} %s verify reset; shutdown;" %
+            "-c", "program {$SOURCE} %s verify; reset init; resume; shutdown;" %
             board.get("upload.offset_address", "") 
         ])
     openocd_args = [
