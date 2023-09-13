@@ -15,6 +15,7 @@
 import platform
 
 from platformio.public import PlatformBase
+from platformio import util
 import sys
 
 class RaspberrypiPlatform(PlatformBase):
@@ -22,26 +23,66 @@ class RaspberrypiPlatform(PlatformBase):
     def is_embedded(self):
         return True
 
+    earle_toolchain = {
+        # Windows
+        "windows_amd64": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/x86_64-w64-mingw32.arm-none-eabi-d3d2e6b.230911.zip",
+        "windows_x86": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/i686-w64-mingw32.arm-none-eabi-d3d2e6b.230911.zip",
+        # No Windows ARM64 or ARM32 builds.
+        # Linux
+        "linux_x86_64": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/x86_64-linux-gnu.arm-none-eabi-d3d2e6b.230911.tar.gz",
+        "linux_i686": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/i686-linux-gnu.arm-none-eabi-d3d2e6b.230911.tar.gz",
+        "linux_aarch64": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/aarch64-linux-gnu.arm-none-eabi-d3d2e6b.230911.tar.gz",
+        "linux_armv7l": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/arm-linux-gnueabihf.arm-none-eabi-d3d2e6b.230911.tar.gz",
+        "linux_armv6l": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/arm-linux-gnueabihf.arm-none-eabi-d3d2e6b.230911.tar.gz",
+        # Mac (Intel and ARM use same toolchain)
+        "darwin_x86_64": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/x86_64-apple-darwin15.arm-none-eabi-d3d2e6b.230911.tar.gz",
+        "darwin_arm64": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/x86_64-apple-darwin15.arm-none-eabi-d3d2e6b.230911.tar.gz"
+    }
+
+    earle_openocd = {
+        # Windows
+        "windows_amd64": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/x86_64-w64-mingw32.openocd-4d87f6dca.230911.zip",
+        "windows_x86": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/i686-w64-mingw32.openocd-4d87f6dca.230911.zip",
+        # No Windows ARM64 or ARM32 builds.
+        # Linux
+        "linux_x86_64": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/x86_64-linux-gnu.openocd-4d87f6dca.230911.tar.gz",
+        "linux_i686": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/i686-linux-gnu.openocd-4d87f6dca.230911.tar.gz",
+        "linux_aarch64": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/aarch64-linux-gnu.openocd-4d87f6dca.230911.tar.gz",
+        "linux_armv7l": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/arm-linux-gnueabihf.openocd-4d87f6dca.230911.tar.gz",
+        "linux_armv6l": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/arm-linux-gnueabihf.openocd-4d87f6dca.230911.tar.gz",
+        # Mac (Intel and ARM use same tool build)
+        "darwin_x86_64": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/x86_64-apple-darwin15.openocd-4d87f6dca.230911.tar.gz",
+        "darwin_arm64": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/x86_64-apple-darwin15.openocd-4d87f6dca.230911.tar.gz"
+    }
+
     def configure_default_packages(self, variables, targets):
+        print("System type: %s" % (util.get_systype()))
         # configure arduino core package.
         # select the right one based on the build.core, disable other one.
         board = variables.get("board")
         board_config = self.board_config(board)
         build_core = variables.get(
             "board_build.core", board_config.get("build.core", "arduino"))
-
+        # Use the same string identifier as seen in "pio system info" and registry
+        sys_type = util.get_systype()
         frameworks = variables.get("pioframework", [])
+        # Configure OpenOCD package if used
+        openocd_pkg = "tool-openocd-rp2040-earlephilhower"
+        if openocd_pkg in self.packages and self.packages[openocd_pkg]["optional"] is False:
+            self.packages[openocd_pkg]["version"] = RaspberrypiPlatform.earle_openocd[sys_type]
         if "arduino" in frameworks:
             if build_core == "arduino":
                 self.frameworks["arduino"]["package"] = "framework-arduino-mbed"
                 self.packages["framework-arduinopico"]["optional"] = True
-                self.packages["toolchain-rp2040-earlephilhower"]["optional"] = True 
+                self.packages["toolchain-rp2040-earlephilhower"]["optional"] = True
                 self.packages.pop("toolchain-rp2040-earlephilhower", None)
             elif build_core == "earlephilhower":
                 self.frameworks["arduino"]["package"] = "framework-arduinopico"
                 self.packages["framework-arduino-mbed"]["optional"] = True
                 self.packages.pop("toolchain-gccarmnoneeabi", None)
-                self.packages["toolchain-rp2040-earlephilhower"]["optional"] = False                
+                self.packages["toolchain-rp2040-earlephilhower"]["optional"] = False
+                # Configure toolchain download link dynamically
+                self.packages["toolchain-rp2040-earlephilhower"]["version"] = RaspberrypiPlatform.earle_toolchain[sys_type]
             else:
                 sys.stderr.write(
                     "Error! Unknown build.core value '%s'. Don't know which Arduino core package to use." % build_core)

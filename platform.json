@@ -35,7 +35,7 @@
       "type": "toolchain", 
       "optional": true,
       "owner": "earlephilhower",
-      "version": "~5.100300.0"
+      "version": "https://github.com/maxgerhardt/toolchain-dummy/archive/refs/heads/main.zip"
     },
     "framework-arduino-mbed": {
       "type": "framework",
