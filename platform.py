@@ -56,7 +56,7 @@ class RaspberrypiPlatform(PlatformBase):
     }
 
     def configure_default_packages(self, variables, targets):
-        print("System type: %s" % (util.get_systype()))
+        #print("System type: %s" % (util.get_systype()))
         # configure arduino core package.
         # select the right one based on the build.core, disable other one.
         board = variables.get("board")
@@ -68,7 +68,7 @@ class RaspberrypiPlatform(PlatformBase):
         frameworks = variables.get("pioframework", [])
         # Configure OpenOCD package if used
         openocd_pkg = "tool-openocd-rp2040-earlephilhower"
-        if openocd_pkg in self.packages and self.packages[openocd_pkg]["optional"] is False:
+        if openocd_pkg in self.packages:
             self.packages[openocd_pkg]["version"] = RaspberrypiPlatform.earle_openocd[sys_type]
         if "arduino" in frameworks:
             if build_core == "arduino":
