@@ -25,8 +25,8 @@ class RaspberrypiPlatform(PlatformBase):
 
     earle_toolchain = {
         # Windows
-        "windows_amd64": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/x86_64-w64-mingw32.arm-none-eabi-d3d2e6b.230911.zip",
-        "windows_x86": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/i686-w64-mingw32.arm-none-eabi-d3d2e6b.230911.zip",
+        "windows_amd64": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/x86_64-w64-mingw32.arm-none-eabi-d3d2e6b.230911-v2.zip",
+        "windows_x86": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/i686-w64-mingw32.arm-none-eabi-d3d2e6b.230911-v2.zip",
         # No Windows ARM64 or ARM32 builds.
         # Linux
         "linux_x86_64": "https://github.com/earlephilhower/pico-quick-toolchain/releases/download/2.1.0-a/x86_64-linux-gnu.arm-none-eabi-d3d2e6b.230911.tar.gz",
