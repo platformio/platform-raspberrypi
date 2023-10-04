@@ -472,7 +472,7 @@ elif upload_protocol.startswith("jlink"):
             "h",
             "loadbin %s, %s" % (source, upload_addr),
             "RSetType 2",
-            "ResetX 100",
+            "ResetX 200",
             "q"
         ]
         with open(script_path, "w") as fp:
