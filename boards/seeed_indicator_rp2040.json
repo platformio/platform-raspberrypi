@@ -2,30 +2,27 @@
   "build": {
     "arduino": {
       "earlephilhower": {
-        "variant": "arduino_nano_connect",
         "boot2_source": "boot2_w25q080_2_padded_checksum.S",
-        "usb_pid": "0x0058",
-        "usb_vid": "0x2341",
-        "usb_manufacturer": "Arduino",
-        "usb_product" : "Arduino Nano RP2040 Connect"
+        "usb_vid": "0x2886",
+        "usb_pid": "0x0050"
       }
     },
-    "core": "arduino",
+    "core": "earlephilhower",
     "cpu": "cortex-m0plus",
-    "extra_flags": "-D ARDUINO_NANO_RP2040_CONNECT -DARDUINO_ARCH_RP2040",
+    "extra_flags": "-D ARDUINO_SEEED_INDICATOR_RP2040 -DARDUINO_ARCH_RP2040 -DUSBD_MAX_POWER_MA=250",
     "f_cpu": "133000000L",
     "hwids": [
       [
-        "0x2341",
-        "0x005E"
+        "0x2E8A",
+        "0x00C0"
       ],
       [
-        "0x2341",
-        "0x805E"
+        "0x2886",
+        "0x0050"
       ]
     ],
     "mcu": "rp2040",
-    "variant": "NANO_RP2040_CONNECT"
+    "variant": "seeed_indicator_rp2040"
   },
   "debug": {
     "jlink_device": "RP2040_M0_0",
@@ -35,7 +32,7 @@
   "frameworks": [
     "arduino"
   ],
-  "name": "Arduino Nano RP2040 Connect",
+  "name": "INDICATOR RP2040",
   "upload": {
     "maximum_ram_size": 270336,
     "maximum_size": 2097152,
@@ -45,13 +42,15 @@
     "wait_for_upload_port": false,
     "protocol": "picotool",
     "protocols": [
+      "blackmagic",
       "cmsis-dap",
       "jlink",
       "raspberrypi-swd",
       "picotool",
-      "picoprobe"
+      "picoprobe",
+      "pico-debug"
     ]
   },
-  "url": "https://blog.arduino.cc/2021/01/20/welcome-raspberry-pi-to-the-world-of-microcontrollers/",
-  "vendor": "Arduino"
+  "url": "https://www.raspberrypi.org/products/raspberry-pi-pico/",
+  "vendor": "Seeed"
 }

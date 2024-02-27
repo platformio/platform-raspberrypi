@@ -8,7 +8,7 @@ How to build PlatformIO based project
 
 ```shell
 # Change directory to example
-$ cd platform-raspberrypi/examples/arduino-blink
+$ cd platform-raspberrypi/examples/arduino-wifi-scan
 
 # Build project
 $ pio run
@@ -22,8 +22,4 @@ $ pio run --target clean
 
 ## Notes
 
-For Raspberry Pi Pico devices, two Arduino cores exist:
-* https://github.com/arduino/ArduinoCore-mbed
-* https://github.com/earlephilhower/arduino-pico
-
-This examples showcases how to use both of these cores in the `platformio.ini`.
+This example is only intended for the Raspberry Pi Pico W with the [Earle Philhower](https://github.com/earlephilhower/arduino-pico) core.

@@ -10,6 +10,9 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
         example:
           - "examples/arduino-blink"
+          - "examples/arduino-wifi-scan"
+          - "examples/arduino-ota"
+          - "examples/arduino-signed-ota"
           - "examples/arduino-external-libs"
     runs-on: ${{ matrix.os }}
     steps:
@@ -20,10 +23,30 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: "3.9"
+      - name: Enable Long Paths
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            git config --system core.longpaths true
+          fi
+        shell: bash
       - name: Install dependencies
         run: |
           pip install -U https://github.com/platformio/platformio/archive/develop.zip
           pio pkg install --global --platform symlink://.
+      # OpenSSL needed for signed OTA update example
+      - name: Install OpenSSL
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt-get install -y openssl
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+            choco install openssl
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            brew install openssl
+          else
+            echo "$RUNNER_OS not supported"
+            exit 1
+          fi
+        shell: bash
       - name: Build examples
         run: |
           pio run -d ${{ matrix.example }}
