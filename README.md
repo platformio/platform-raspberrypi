@@ -10,7 +10,8 @@ RP2040 is a low-cost, high-performance microcontroller device with a large on-ch
 # Usage
 
 1. [Install PlatformIO](https://platformio.org)
-2. Create PlatformIO project and configure a platform option in [platformio.ini](https://docs.platformio.org/page/projectconf.html) file:
+2. **Enable Win32 NTFS Long Paths** if on Windows. Otherwise, the installation of the package files for Arduino-Pico **will** fail. See https://arduino-pico.readthedocs.io/en/latest/platformio.html#important-steps-for-windows-users-before-installing.
+3. Create PlatformIO project and configure a platform option in [platformio.ini](https://docs.platformio.org/page/projectconf.html) file:
 
 ## Stable version
 
