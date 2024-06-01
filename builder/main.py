@@ -210,7 +210,7 @@ elif upload_protocol in debug_tools:
             ["-c", "adapter speed %s" % env.GetProjectOption("debug_speed")]
         )
     openocd_args.extend([
-        "-c", "program {$SOURCE} %s verify reset; shutdown;" %
+        "-c", "targets rp2040.core0; program {$SOURCE} %s verify reset exit; shutdown;" %
         board.get("upload.offset_address", "")
     ])
     openocd_args = [
