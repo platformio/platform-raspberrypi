@@ -2,14 +2,14 @@
   "build": {
     "arduino": {
       "earlephilhower": {
-        "boot2_source": "boot2_generic_03h_4_padded_checksum.S",
-        "usb_vid": "0x2E8A",
-        "usb_pid": "0x1043"
+        "boot2_source": "boot2_w25q080_2_padded_checksum.S",
+        "usb_vid": "0x2E8B",
+        "usb_pid": "0xF00A"
       }
     },
     "core": "earlephilhower",
     "cpu": "cortex-m0plus",
-    "extra_flags": "-D ARDUINO_NEWSAN_ARCHI -DARDUINO_ARCH_RP2040 -DUSBD_MAX_POWER_MA=250",
+    "extra_flags": "-D ARDUINO_BRIDGETEK_IDM2040-43A -DARDUINO_ARCH_RP2040 -DUSBD_MAX_POWER_MA=250 -DFT8XX_TYPE=BT883 -DDISPLAY_RES=WQVGA -DPLATFORM_RP2040",
     "f_cpu": "133000000L",
     "hwids": [
       [
@@ -17,12 +17,12 @@
         "0x00C0"
       ],
       [
-        "0x2E8A",
-        "0x1043"
+        "0x2E8B",
+        "0xF00A"
       ]
     ],
     "mcu": "rp2040",
-    "variant": "newsan_archi"
+    "variant": "bridgetek_idm2040-43a"
   },
   "debug": {
     "jlink_device": "RP2040_M0_0",
@@ -32,10 +32,10 @@
   "frameworks": [
     "arduino"
   ],
-  "name": "Archi",
+  "name": "IDM2040-43A",
   "upload": {
     "maximum_ram_size": 270336,
-    "maximum_size": 4194304,
+    "maximum_size": 8388608,
     "require_upload_port": true,
     "native_usb": true,
     "use_1200bps_touch": true,
@@ -51,6 +51,6 @@
       "pico-debug"
     ]
   },
-  "url": "https://archikids.com.ar/",
-  "vendor": "Newsan"
+  "url": "https://www.raspberrypi.org/products/raspberry-pi-pico/",
+  "vendor": "BridgeTek"
 }
