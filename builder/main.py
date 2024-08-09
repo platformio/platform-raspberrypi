@@ -257,7 +257,9 @@ else:
         AlwaysBuild(target_firm)
     else:
         target_firm = env.ElfToBin(join("$BUILD_DIR", "${PROGNAME}"), target_elf)
-        if is_arduino_pico_build:
+        signing_script_exists = exists(join(platform.get_package_dir("framework-arduinopico") or "",
+            "tools", "signing.py"))
+        if is_arduino_pico_build and signing_script_exists:
             target_signed_bin = env.BinToSignedBin(join("$BUILD_DIR", "${PROGNAME}"), target_firm)
             env.Depends(target_signed_bin, "checkprogsize")
         env.Depends(target_firm, "checkprogsize")
