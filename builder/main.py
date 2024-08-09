@@ -15,7 +15,7 @@
 import sys
 from platform import system
 from os import makedirs, remove
-from os.path import isdir, join, isfile
+from os.path import isdir, join, isfile, exists
 import re
 import time
 from shutil import copyfile
