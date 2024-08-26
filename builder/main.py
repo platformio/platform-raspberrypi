@@ -117,10 +117,15 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
 
 def generate_uf2(target, source, env):
     elf_file = target[0].get_path()
+    # todo: needs update for tools-rp2040 tools, latest picotool
     env.Execute(
         " ".join(
             [
-                "elf2uf2",
+                "picotool",
+                "uf2",
+                "convert",
+                "-t",
+                "elf",
                 '"%s"' % elf_file,
                 '"%s"' % elf_file.replace(".elf", ".uf2"),
             ]
