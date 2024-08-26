@@ -23,6 +23,10 @@
     "arduino": {
       "package": "framework-arduino-mbed",
       "script": "builder/frameworks/arduino/arduino.py"
+    },
+    "picosdk": {
+      "package": "framework-picosdk",
+      "script": "builder/frameworks/picosdk.py"
     }
   },
   "packages": {
@@ -48,6 +52,12 @@
       "optional": true,
       "owner": "earlephilhower",
       "version": "https://github.com/earlephilhower/arduino-pico.git#96a2e925cf86b1c3a7343bd1efdbaf48844962e3"
+    },
+    "framework-picosdk": {
+      "type": "framework",
+      "optional": true,
+      "owner": "platformio",
+      "version": "https://github.com/maxgerhardt/pico-sdk.git"
     },
     "tool-rp2040tools": {
       "type": "uploader",
