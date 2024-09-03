@@ -37,7 +37,7 @@
   ],
   "name": "Arduino Nano RP2040 Connect",
   "upload": {
-    "maximum_ram_size": 270336,
+    "maximum_ram_size": 262144,
     "maximum_size": 2097152,
     "require_upload_port": true,
     "native_usb": true,
