@@ -1,0 +1,42 @@
+{
+  "build": {
+    "core": "arduino",
+    "cpu": "cortex-m0plus",
+    "extra_flags": "-DFEATHER_RP2040 -DARDUINO_ARCH_RP2040",
+    "f_cpu": "125000000L",
+    "hwids": [
+      [
+        "0x239A",
+        "0x80f1"
+      ]
+    ],
+    "mcu": "rp2040",
+    "variant": "RASPBERRY_PI_PICO"
+  },
+  "debug": {
+    "jlink_device": "RP2040_M0_0",
+    "openocd_target": "rp2040.cfg",
+    "svd_path": "rp2040.svd"
+  },
+  "frameworks": [
+    "arduino"
+  ],
+  "name": "Adafruit Feather RP2040",
+  "upload": {
+    "maximum_ram_size": 270336,
+    "maximum_size": 8388608,
+    "require_upload_port": true,
+    "native_usb": false,
+    "use_1200bps_touch": true,
+    "wait_for_upload_port": false,
+    "protocol": "picotool",
+    "protocols": [
+      "cmsis-dap",
+      "jlink",
+      "raspberrypi-swd",
+      "picotool"
+    ]
+  },
+  "url": "https://blog.arduino.cc/2021/01/20/welcome-raspberry-pi-to-the-world-of-microcontrollers/",
+  "vendor": "Arduino"
+}
