@@ -1,0 +1,83 @@
+[tool.poetry]
+name = "platform-raspberrypi"
+version = "1.17.0"
+description = "RP2040 is a low-cost, high-performance microcontroller device with a large on-chip memory, symmetric dual-core processor complex, and rich peripheral."
+authors = ["PlatformIO <contact@platformio.org>"]
+license = "Apache-2.0"
+readme = "README.md"
+homepage = "https://www.raspberrypi.org/documentation/rp2040/getting-started/"
+repository = "https://github.com/platformio/platform-raspberrypi.git"
+keywords = ["dev-platform", "ARM", "Cortex-M", "Raspberry Pi", "RP2040", "platformio"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.8"
+platformio = "^6.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+pytest-cov = "^4.0.0"
+pytest-mock = "^3.12.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--verbose",
+    "--cov=platform.py",
+    "--cov=builder",
+    "--cov-report=term-missing",
+    "--cov-report=html:htmlcov",
+    "--cov-report=xml:coverage.xml",
+    "--cov-fail-under=80"
+]
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests", 
+    "slow: Tests that take a long time to run"
+]
+filterwarnings = [
+    "error",
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning"
+]
+
+[tool.coverage.run]
+source = [".", "builder"]
+omit = [
+    "tests/*",
+    "examples/*",
+    "misc/*",
+    "*/__pycache__/*",
+    "*/.*",
+    "setup.py"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:"
+]
+show_missing = true
+skip_covered = false
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.coverage.xml]
+output = "coverage.xml"
