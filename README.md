@@ -7,6 +7,13 @@ RP2040 is a low-cost, high-performance microcontroller device with a large on-ch
 * [Home](https://registry.platformio.org/platforms/platformio/raspberrypi) (home page in the PlatformIO Registry)
 * [Documentation](https://docs.platformio.org/page/platforms/raspberrypi.html) (advanced usage, packages, boards, frameworks, etc.)
 
+# WARNING
+
+This platform has a demonstrative character, and we do not recommend using it for production use.
+Board support is very limited.
+Some features are not supported.
+There are currently no further updates planned.
+
 # Usage
 
 1. [Install PlatformIO](https://platformio.org)
