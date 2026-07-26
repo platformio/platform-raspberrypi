@@ -1,0 +1,42 @@
+{
+  "build": {
+    "core": "arduino",
+    "cpu": "cortex-m0plus",
+    "extra_flags": "-D ARDUINO_RASPBERRY_PI_PICO -DARDUINO_ARCH_RP2040 -DARDUINO_TREX_ONE",
+    "f_cpu": "133000000L",
+    "hwids": [
+      [
+        "0x1209",
+        "0xD00F"
+      ]
+    ],
+    "mcu": "rp2040",
+    "variant": "TREX_ONE"
+  },
+  "debug": {
+    "jlink_device": "RP2040_M0_0",
+    "openocd_target": "rp2040.cfg",
+    "svd_path": "rp2040.svd"
+  },
+  "frameworks": [
+    "arduino"
+  ],
+  "name": "TREX One (RP2040)",
+  "upload": {
+    "maximum_ram_size": 270336,
+    "maximum_size": 16384000,
+    "require_upload_port": true,
+    "native_usb": true,
+    "use_1200bps_touch": true,
+    "wait_for_upload_port": false,
+    "protocol": "picotool",
+    "protocols": [
+      "cmsis-dap",
+      "jlink",
+      "raspberrypi-swd",
+      "picotool"
+    ]
+  },
+  "url": "https://forums.raspberrypi.com/viewtopic.php?f=147&t=322135&p=1928264",
+  "vendor": "DatanoiseTV"
+}
